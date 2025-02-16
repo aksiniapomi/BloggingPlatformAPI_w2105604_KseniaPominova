@@ -1,0 +1,8 @@
+/Users/xeniauniaccount/Desktop/GothamBlogWebDev/BloggingPlatformAPI/obj/Debug/net9.0/BloggingPlatformAPI.csproj.AssemblyReference.cache
+/Users/xeniauniaccount/Desktop/GothamBlogWebDev/BloggingPlatformAPI/obj/Debug/net9.0/BloggingPlatformAPI.GeneratedMSBuildEditorConfig.editorconfig
+/Users/xeniauniaccount/Desktop/GothamBlogWebDev/BloggingPlatformAPI/obj/Debug/net9.0/BloggingPlatformAPI.AssemblyInfoInputs.cache
+/Users/xeniauniaccount/Desktop/GothamBlogWebDev/BloggingPlatformAPI/obj/Debug/net9.0/BloggingPlatformAPI.AssemblyInfo.cs
+/Users/xeniauniaccount/Desktop/GothamBlogWebDev/BloggingPlatformAPI/obj/Debug/net9.0/BloggingPlatformAPI.csproj.CoreCompileInputs.cache
+/Users/xeniauniaccount/Desktop/GothamBlogWebDev/BloggingPlatformAPI/obj/Debug/net9.0/BloggingPlatformAPI.MvcApplicationPartsAssemblyInfo.cs
+/Users/xeniauniaccount/Desktop/GothamBlogWebDev/BloggingPlatformAPI/obj/Debug/net9.0/BloggingPlatformAPI.MvcApplicationPartsAssemblyInfo.cache
+/Users/xeniauniaccount/Desktop/GothamBlogWebDev/BloggingPlatformAPI/obj/Debug/net9.0/BloggingPlatformAPI.sourcelink.json
