@@ -4,10 +4,10 @@
 //A blog post can have multiple likes (1:M with Like)
 //A blog post belongs to one category(One Category can have multiple blog posts; 1:M relationship)
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using GothamPostBlogAPI.Models;
+using System; //for the DateTime in the core .Net functionality 
+using System.Collections.Generic; //namespace for working with collections to store the comments and likes 
+using System.ComponentModel.DataAnnotations; //data validation 
+using GothamPostBlogAPI.Models; //own Models namespace to use custome models in the BlogPost.cs 
 
 namespace GothamPostBlogAPI.Models
 {
@@ -34,7 +34,7 @@ namespace GothamPostBlogAPI.Models
 
         //A List of comments belonging to the post, EF will use it to load all coments belonging to the post 
         public List<Comment> Comments { get; set; } = new();  //A blog post can have multiple comments
-       //A List of likes belonging to the post 
+                                                              //A List of likes belonging to the post 
         public List<Like> Likes { get; set; } = new();  //A blog post can have multiple likes
     }
 }
