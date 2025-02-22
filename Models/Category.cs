@@ -16,7 +16,14 @@ namespace GothamPostBlogAPI.Models
         public string Name { get; set; }  //Category name
 
         //List stores multiple blog posts; one category can have multiple blog posts 
-        public List<BlogPost> BlogPosts { get; set; } = new(); // Navigation Property; =new(); initialises the List, null be default
+        public List<BlogPost> BlogPosts { get; set; } // Navigation Property
+
+        public Category(string name)
+        {
+            Name = name;
+            BlogPosts = new(); //Initialised the List to prevent it being null; Ensures Name is always set when creating a Category manually
+
+        }
     }
 }
 

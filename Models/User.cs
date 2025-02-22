@@ -1,7 +1,9 @@
 //The table Users will store Users with different roles (Admin, RegisteredUser, Reader) 
-// 	A user can write multiple blog posts
-//  A user can write multiple comments
-//  A user can like multiple blog posts
+// A user can write multiple blog posts(One-to-Many with BlogPost)
+// A user can write multiple comments(One-to-Many with Comment)
+// A user can like multiple blog posts (One-to-Many with Like)
+// A user must have a role (Admin, RegistertedUser, Reader)
+// A user should have an email and hashed password 
 
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -24,25 +26,45 @@ namespace GothamPostBlogAPI.Models
 
         //User attributes 
         [Required, MaxLength(100)]
-        public string Username { get; set; }
+        public required string Username { get; set; }
 
         [Required]
-        public string Email { get; set; }
+        public required string Email { get; set; }
 
         [Required]
-        public string PasswordHash { get; set; }  // Store hashed passwords
+        public required string PasswordHash { get; set; }  // Store hashed passwords
 
         [Required]
         public UserRole Role { get; set; }  // Enum for role-based access
 
         // Navigation Properties (Relationships)
         //A User can create multiple blog posts 
-        public List<BlogPost> BlogPosts { get; set; } = new();
+        public List<BlogPost> BlogPosts { get; set; }
         //A User can write multiple comments 
-        public List<Comment> Comments { get; set; } = new();
+        public List<Comment> Comments { get; set; }
         //A User can like multiple blog posts 
-        public List<Like> Likes { get; set; } = new();
-    }
+        public List<Like> Likes { get; set; }
 
+
+        public User(string username, string email, string passwordHash, UserRole role)
+        {
+            Username = username;
+            Email = email;
+            PasswordHash = passwordHash;
+            Role = role; //ensures that when the user is created it is always assigned a role 
+            BlogPosts = new(); //new empty list to store blog posts created by user to avoid null exception 
+            Comments = new();
+            Likes = new();
+        }
+    }
 }
+
+
+
+// var adminUser = new User {
+//     Username = "Admin123",
+//     Email = "admin@example.com",
+//     PasswordHash = "hashed_password",
+//     Role = UserRole.Admin
+// };
 
