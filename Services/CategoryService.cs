@@ -10,22 +10,24 @@ namespace GothamPostBlogAPI.Services
 
         public CategoryService(ApplicationDbContext context)
         {
-            _context = context;
+            _context = context; //parameter passed to contructor from Program.cs
+            //_context is a private field that stores context 
+            //assings the context from constructor to the field; _ avoids naming conflicts
         }
 
-        // ✅ Get all categories
+        //Get all categories
         public async Task<List<Category>> GetAllCategoriesAsync()
         {
             return await _context.Categories.ToListAsync();
         }
 
-        // ✅ Get a category by ID
+        // Get a category by ID
         public async Task<Category?> GetCategoryByIdAsync(int id)
         {
             return await _context.Categories.FindAsync(id);
         }
 
-        // ✅ Create a new category
+        //Create a new category
         public async Task<Category> CreateCategoryAsync(Category category)
         {
             _context.Categories.Add(category);
@@ -33,12 +35,12 @@ namespace GothamPostBlogAPI.Services
             return category;
         }
 
-        // ✅ Update an existing category
+        //Update an existing category
         public async Task<bool> UpdateCategoryAsync(int id, Category updatedCategory)
         {
             if (id != updatedCategory.CategoryId)
             {
-                return false; // ID mismatch
+                return false; //ID mismatch
             }
 
             _context.Entry(updatedCategory).State = EntityState.Modified;
@@ -46,7 +48,7 @@ namespace GothamPostBlogAPI.Services
             return true;
         }
 
-        // ✅ Delete a category
+        //Delete a category
         public async Task<bool> DeleteCategoryAsync(int id)
         {
             var category = await _context.Categories.FindAsync(id);
