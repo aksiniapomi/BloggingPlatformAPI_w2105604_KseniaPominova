@@ -4,6 +4,9 @@
 using Microsoft.AspNetCore.Mvc; //allows to create a web API Controller 
 using GothamPostBlogAPI.Services; //imports the service layer (BlogPostService)
 using GothamPostBlogAPI.Models; //imports the data models (BlogPost)
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GothamPostBlogAPI.Controllers
 {
@@ -21,7 +24,8 @@ namespace GothamPostBlogAPI.Controllers
             _blogPostService = blogPostService;
         }
 
-        // GET all blog posts
+        // GET all blog posts (Public access to all users)
+        [AllowAnonymous] //no authentication required 
         [HttpGet] //route GET /api/blogposts 
         //async makes the method asynchronous - doesnt block the program while waiting for a task to complete 
         //without async the app would freeze while waiting for the database query; with async it keeps running while waiting for a response
@@ -31,7 +35,8 @@ namespace GothamPostBlogAPI.Controllers
                                                                   //return await - wait for the results before returning 
         }
 
-        // GET a single blog post by ID
+        // GET a single blog post by ID (Public access to all users)
+        [AllowAnonymous]
         [HttpGet("{id}")] //returns the blog posts defined by the id number GET /api/blogposts/1 
         public async Task<ActionResult<BlogPost>> GetBlogPost(int id)
         {
@@ -43,7 +48,8 @@ namespace GothamPostBlogAPI.Controllers
             return blogPost;
         }
 
-        // POST: Create a new blog post
+        // POST: Create a new blog post (only registered Users and Admins)
+        [Authorize(Roles = "Admin, RegisteredUser")]
         [HttpPost] //route: POST /api/blogposts 
         public async Task<ActionResult<BlogPost>> CreateBlogPost(BlogPost blogPost)
         {
@@ -51,7 +57,8 @@ namespace GothamPostBlogAPI.Controllers
             return CreatedAtAction(nameof(GetBlogPost), new { id = createdPost.BlogPostId }, createdPost); //return 201 Created with new blog post 
         }
 
-        // PUT: Update a blog post
+        // PUT: Update a blog post (only registered Users and Admins)
+        [Authorize(Roles = "Admin, RegisteredUser")]
         [HttpPut("{id}")] //route: PUT /api/blogposts/1
         public async Task<IActionResult> UpdateBlogPost(int id, BlogPost blogPost)
         {
@@ -63,7 +70,8 @@ namespace GothamPostBlogAPI.Controllers
             return NoContent();
         }
 
-        // DELETE: Remove a blog post
+        // DELETE: Remove a blog post (Only Admins)
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")] //route: DELETE /api/blogposts/1 
         public async Task<IActionResult> DeleteBlogPost(int id)
         {
