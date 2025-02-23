@@ -14,7 +14,9 @@ namespace GothamPostBlogAPI.Services
         }
 
         //Get all likes from the database wih User and BlogPost 
-        public async Task<List<Like>> GetAllLikesAsync()
+        public async Task<List<Like>> GetAllLikesAsync() //async function that returns result of type T (List here)
+        //while the database query is running the app remains responsive for faster performance 
+        //task returns a promise of the future result 
         {
             return await _context.Likes
                 .Include(like => like.User)       //Include User who liked the post
