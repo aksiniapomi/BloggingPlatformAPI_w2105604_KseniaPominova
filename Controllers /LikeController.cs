@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using GothamPostBlogAPI.Services;
 using GothamPostBlogAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GothamPostBlogAPI.Controllers
 {
@@ -15,14 +16,16 @@ namespace GothamPostBlogAPI.Controllers
             _likeService = likeService;
         }
 
-        //GET all likes
+        //GET all likes (Public)
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Like>>> GetLikes()
         {
             return await _likeService.GetAllLikesAsync();
         }
 
-        //GET a like by ID
+        //GET a like by ID (Public)
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<ActionResult<Like>> GetLike(int id)
         {
@@ -34,7 +37,8 @@ namespace GothamPostBlogAPI.Controllers
             return like;
         }
 
-        //POST: Like a blog post
+        //POST: Like a blog post (Only Registered Users and Admins)
+        [Authorize(Roles ="Admin, RegisteredUser")]
         [HttpPost]
         public async Task<ActionResult<Like>> CreateLike(Like like)
         {
@@ -42,7 +46,8 @@ namespace GothamPostBlogAPI.Controllers
             return CreatedAtAction(nameof(GetLike), new { id = createdLike.LikeId }, createdLike);
         }
 
-        //DELETE: Remove a like
+        //DELETE: Remove a like (Only Admin and Registered User)
+        [Authorize(Roles ="Admin, RegisteredUser")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteLike(int id)
         {
