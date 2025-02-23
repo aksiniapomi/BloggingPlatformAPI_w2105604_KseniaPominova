@@ -51,12 +51,12 @@ namespace GothamPostBlogAPI.Services
         }
 
         //Remove a like (Unlike a post)
-        public async Task<bool> DeleteLikeAsync(int id)
+        public async Task<bool> DeleteLikeAsync(int likeId, int userId)
         {
-            var like = await _context.Likes.FindAsync(id);
-            if (like == null)
+            var like = await _context.Likes.FindAsync(likeId);
+            if (like == null || like.UserId != userId) //Check and match ownership
             {
-                return false;
+                return false; //Like doesn't exist or belongs to another user
             }
 
             _context.Likes.Remove(like);

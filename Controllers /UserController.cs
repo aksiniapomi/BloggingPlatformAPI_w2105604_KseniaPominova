@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using GothamPostBlogAPI.Services;
 using GothamPostBlogAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GothamPostBlogAPI.Controllers
 {
@@ -15,14 +16,16 @@ namespace GothamPostBlogAPI.Controllers
             _userService = userService;
         }
 
-        //GET all users
+        //GET all users (Only Admins can view the full list of users)
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
             return await _userService.GetAllUsersAsync();
         }
 
-        //GET a single user by ID
+        //GET a single user by ID (Only the Admin and the Users themselves)
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
@@ -31,6 +34,14 @@ namespace GothamPostBlogAPI.Controllers
             {
                 return NotFound();
             }
+
+            //Only the Admin or the Users themselves can access this information 
+            var loggedInUserId = int.Parse(User.Identity.Name); //Extract User ID from JWT
+            if (user.UserId != loggedInUserId && !User.IsInRole("Admin"))
+            {
+                return Forbid(); //Access denied
+            }
+
             return user;
         }
 
@@ -54,7 +65,8 @@ namespace GothamPostBlogAPI.Controllers
             return NoContent();
         }
 
-        //DELETE: Remove a user
+        //DELETE: Remove a user (Only Admins)
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {

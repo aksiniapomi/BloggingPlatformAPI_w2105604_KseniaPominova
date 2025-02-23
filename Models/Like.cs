@@ -21,11 +21,15 @@ namespace GothamPostBlogAPI.Models
         public int BlogPostId { get; set; } //BlogPost is the Foreign Key 
         public BlogPost BlogPost { get; set; }
 
+        public Like() { } //Parameterless constructor 
+
+        //Constructor with parameters for explicit object creation 
         public Like(User user, BlogPost blogPost)
         {
             User = user; //likes are always linked to user 
             UserId = user.UserId;
             BlogPost = blogPost; //cannot be null 
+            BlogPostId = blogPost.BlogPostId;
         }
     }
 }

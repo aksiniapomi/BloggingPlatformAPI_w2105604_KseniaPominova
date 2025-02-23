@@ -38,23 +38,34 @@ namespace GothamPostBlogAPI.Controllers
         }
 
         //POST: Like a blog post (Only Registered Users and Admins)
-        [Authorize(Roles ="Admin, RegisteredUser")]
+        [Authorize(Roles = "Admin, RegisteredUser")]
         [HttpPost]
-        public async Task<ActionResult<Like>> CreateLike(Like like)
+        public async Task<ActionResult<Like>> CreateLike(int blogPostId)
         {
-            var createdLike = await _likeService.CreateLikeAsync(like);
-            return CreatedAtAction(nameof(GetLike), new { id = createdLike.LikeId }, createdLike);
+            //Extract user ID from JWT
+            var userId = int.Parse(User.Identity.Name);
+
+            var newLike = new Like
+            {
+                UserId = userId,
+                BlogPostId = blogPostId
+            };
+
+            var createdLike = await _likeService.CreateLikeAsync(newLike);
+            return CreatedAtAction(nameof(GetLikes), new { id = createdLike.LikeId }, createdLike);
         }
 
         //DELETE: Remove a like (Only Admin and Registered User)
-        [Authorize(Roles ="Admin, RegisteredUser")]
+        [Authorize(Roles = "Admin,RegisteredUser")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteLike(int id)
         {
-            var success = await _likeService.DeleteLikeAsync(id);
+            var userId = int.Parse(User.Identity.Name); //Extract logged-in user ID from JWT 
+
+            var success = await _likeService.DeleteLikeAsync(id, userId);
             if (!success)
             {
-                return NotFound();
+                return Forbid(); //Prevents deleting someone else's like
             }
             return NoContent();
         }
