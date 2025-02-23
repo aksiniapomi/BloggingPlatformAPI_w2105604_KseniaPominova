@@ -47,19 +47,17 @@ namespace GothamPostBlogAPI.Services
             return blogPost;
         }
 
-        // end here // 
-
         //Update an existing blog post
-        public async Task<bool> UpdateBlogPostAsync(int id, BlogPost updatedBlogPost)
+        public async Task<bool> UpdateBlogPostAsync(int id, BlogPost updatedBlogPost) //returns true or false
         {
-            if (id != updatedBlogPost.BlogPostId)
+            if (id != updatedBlogPost.BlogPostId) //Compares the id parameter with updatedBlogPost.BlogPostId
             {
                 return false; // ID mismatch
             }
 
-            _context.Entry(updatedBlogPost).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-            return true;
+            _context.Entry(updatedBlogPost).State = EntityState.Modified; //mark the entity as modified 
+            await _context.SaveChangesAsync(); //when called EF Core updates the database asynchronously
+            return true; //if update was successful return true 
         }
 
         //Delete a blog post
