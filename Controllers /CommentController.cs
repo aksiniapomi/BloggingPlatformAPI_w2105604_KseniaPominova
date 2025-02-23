@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using GothamPostBlogAPI.Services;
 using GothamPostBlogAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GothamPostBlogAPI.Controllers
 {
@@ -15,14 +16,14 @@ namespace GothamPostBlogAPI.Controllers
             _commentService = commentService;
         }
 
-        //GET all comments
+        //GET all comments (Public)
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Comment>>> GetComments()
         {
             return await _commentService.GetAllCommentsAsync();
         }
 
-        //GET a single comment by ID
+        //GET a single comment by ID (Public)
         [HttpGet("{id}")]
         public async Task<ActionResult<Comment>> GetComment(int id)
         {
@@ -34,7 +35,8 @@ namespace GothamPostBlogAPI.Controllers
             return comment;
         }
 
-        //POST: Create a new comment
+        //POST: Create a new comment (Only registered Users and Admins)
+        [Authorize(Roles = "Admin, RegisteredUser")]
         [HttpPost]
         public async Task<ActionResult<Comment>> CreateComment(Comment comment)
         {
@@ -42,7 +44,8 @@ namespace GothamPostBlogAPI.Controllers
             return CreatedAtAction(nameof(GetComment), new { id = createdComment.CommentId }, createdComment);
         }
 
-        //PUT: Update a comment
+        //PUT: Update a comment (Only registered Users and Admins)
+        [Authorize(Roles = "Admin, RegisteredUser")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateComment(int id, Comment comment)
         {
@@ -54,7 +57,8 @@ namespace GothamPostBlogAPI.Controllers
             return NoContent();
         }
 
-        //DELETE: Remove a comment
+        //DELETE: Remove a comment (only Admin)
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteComment(int id)
         {
