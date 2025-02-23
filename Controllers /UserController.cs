@@ -45,7 +45,8 @@ namespace GothamPostBlogAPI.Controllers
             return user;
         }
 
-        //POST: Create a new user
+        //POST: Create a new user (anyone can register - new users)
+        [AllowAnonymous] //anyone should be able to register without logging in 
         [HttpPost]
         public async Task<ActionResult<User>> CreateUser(User user)
         {
@@ -54,9 +55,18 @@ namespace GothamPostBlogAPI.Controllers
         }
 
         //PUT: Update a user
+        //Users should be able to update their own profiles; Admins can update any profile
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(int id, User user)
         {
+            var loggedInUserId = int.Parse(User.Identity.Name); //Exract user ID from JWT
+
+            if (loggedInUserId != id && !User.IsInRole("Admin"))
+            {
+                return Forbid(); //Prevent updating another user’s account, unless - Admin
+            }
+
             var success = await _userService.UpdateUserAsync(id, user);
             if (!success)
             {
