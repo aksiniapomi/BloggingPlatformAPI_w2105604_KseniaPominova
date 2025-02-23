@@ -14,9 +14,9 @@ namespace GothamPostBlogAPI.Models
     public enum UserRole //will be stored an enumerated type (0,1,2)
     {
         //define the roles/permissions available 
-        Admin, //has all permissions 
-        RegisteredUser, //cannot delete blog posts; can make, comment and like posts 
-        Reader //cannot create/delete blog posts/make comments or like posts; can register 
+        Admin, //has all permissions (can create, update, delete blog posts, comments and users)
+        RegisteredUser, //cannot delete blog posts; can create, comment and like posts 
+        Reader //cannot create/delete blog posts/make comments or like posts; can register and read blog posts 
     }
 
     public class User
