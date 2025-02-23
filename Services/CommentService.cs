@@ -14,7 +14,7 @@ namespace GothamPostBlogAPI.Services
         }
 
         //Get all comments
-        public async Task<List<Comment>> GetAllCommentsAsync()
+        public async Task<List<Comment>> GetAllCommentsAsync() //retrieve all comments from the database with User and Blog Post 
         {
             return await _context.Comments
                 .Include(comment => comment.User)       //Include User who made the comment
@@ -23,7 +23,7 @@ namespace GothamPostBlogAPI.Services
         }
 
         //Get a comment by ID
-        public async Task<Comment?> GetCommentByIdAsync(int id)
+        public async Task<Comment?> GetCommentByIdAsync(int id) //retrieve a single comment by ID
         {
             return await _context.Comments
                 .Include(comment => comment.User)
@@ -31,7 +31,7 @@ namespace GothamPostBlogAPI.Services
                 .FirstOrDefaultAsync(comment => comment.CommentId == id);
         }
 
-        //Create a new comment
+        //Create a new comment in the database 
         public async Task<Comment> CreateCommentAsync(Comment comment)
         {
             comment.DateCreated = DateTime.UtcNow;  //Set timestamp
@@ -40,7 +40,7 @@ namespace GothamPostBlogAPI.Services
             return comment;
         }
 
-        //Update an existing comment
+        //Update an existing comment by its ID
         public async Task<bool> UpdateCommentAsync(int id, Comment updatedComment)
         {
             if (id != updatedComment.CommentId)
@@ -53,7 +53,7 @@ namespace GothamPostBlogAPI.Services
             return true;
         }
 
-        //Delete a comment
+        //Delete a comment by ID
         public async Task<bool> DeleteCommentAsync(int id)
         {
             var comment = await _context.Comments.FindAsync(id);
