@@ -50,7 +50,7 @@ namespace GothamPostBlogAPI.Controllers
 
         // POST: Create a new blog post (only registered Users and Admins)
         [Authorize(Roles = "Admin, RegisteredUser")]
-        [HttpPost] //route: POST /api/blogposts 
+        [HttpPost] //route: POST /api/blogposts - endpoint of the API
         public async Task<ActionResult<BlogPost>> CreateBlogPost(BlogPost blogPost)
         {
             var createdPost = await _blogPostService.CreateBlogPostAsync(blogPost); //calls CreateBlogPostAsync(blogPost) in BlogPostService

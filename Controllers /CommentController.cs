@@ -17,6 +17,7 @@ namespace GothamPostBlogAPI.Controllers
         }
 
         //GET all comments (Public)
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Comment>>> GetComments()
         {
@@ -24,6 +25,7 @@ namespace GothamPostBlogAPI.Controllers
         }
 
         //GET a single comment by ID (Public)
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<ActionResult<Comment>> GetComment(int id)
         {
@@ -57,7 +59,7 @@ namespace GothamPostBlogAPI.Controllers
             return NoContent();
         }
 
-        //DELETE: Remove a comment (only Admin)
+        //DELETE: Remove a comment (only Admins)
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteComment(int id)
