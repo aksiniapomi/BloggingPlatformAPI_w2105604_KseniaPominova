@@ -1,16 +1,17 @@
-using GothamPostBlogAPI.Data;
-using GothamPostBlogAPI.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer; //Enables JWT authentication 
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+//Imports
+using GothamPostBlogAPI.Data; //Allow access to ApplicationDbContext.cs to handle database operations (project files)
+using GothamPostBlogAPI.Services; //Business logic services import (project files)
+using Microsoft.AspNetCore.Authentication.JwtBearer; //Enables JWT authentication to verify users with JWT tokens (security)
+using Microsoft.AspNetCore.Authorization; //allows to control to API endpoints by defining access levels 
+using Microsoft.AspNetCore.Builder; //Configuration middleware (authetication, routing, Swagger; core API)
+using Microsoft.AspNetCore.Hosting; //Allows API to run as a web serivce 
+using Microsoft.AspNetCore.Mvc; //Handles API Controllers (how requests and responses are managed; core API)
+using Microsoft.EntityFrameworkCore; //Enable database connectivity using EF Core 
+using Microsoft.Extensions.Configuration; //Loads app settings from appsettings.json (core API)
+using Microsoft.Extensions.DependencyInjection; //Register services (DbContext, AuthService, etc; core API)
+using Microsoft.Extensions.Hosting; //Manages API lifecycle (start,stop,or restart; core API)
 using Microsoft.IdentityModel.Tokens; //Verifies JWT validity 
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models; //Enables Swagger for API documentation and testing directly from a browser
 using System.Text; //Converts secret keys into bytes for token signing 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,7 +21,7 @@ var configuration = builder.Configuration;
 
 //Register Database Context (use SQLite)
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlite(configuration.GetConnectionString("DefaultConnection"))); //Usage of EF Core to let the API communicate with SQLite to store and retrieve data
 
 //Add Authentication using JWT Bearer Token
 //JWT JSON Web Token securely autheticates users in web application 
@@ -59,8 +60,8 @@ builder.Services.AddScoped<LikeService>();
 builder.Services.AddControllers();
 
 // Configure Swagger for API Documentation; automatic API docs generation and testing 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
+builder.Services.AddEndpointsApiExplorer(); //Enable Swagger for API testing
+builder.Services.AddSwaggerGen(options => //Adds Swagger UI
 {
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "Gotham Post Blog API", Version = "v1" });
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme

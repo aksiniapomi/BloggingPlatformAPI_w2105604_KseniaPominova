@@ -195,3 +195,7 @@
 /Users/xeniauniaccount/Desktop/GothamBlogWebDev/BloggingPlatformAPI/obj/Debug/net9.0/BloggingPlatformAPI.pdb
 /Users/xeniauniaccount/Desktop/GothamBlogWebDev/BloggingPlatformAPI/obj/Debug/net9.0/BloggingPlatformAPI.genruntimeconfig.cache
 /Users/xeniauniaccount/Desktop/GothamBlogWebDev/BloggingPlatformAPI/obj/Debug/net9.0/ref/BloggingPlatformAPI.dll
+/Users/xeniauniaccount/Desktop/GothamBlogWebDev/BloggingPlatformAPI/bin/Debug/net9.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
+/Users/xeniauniaccount/Desktop/GothamBlogWebDev/BloggingPlatformAPI/bin/Debug/net9.0/Swashbuckle.AspNetCore.Swagger.dll
+/Users/xeniauniaccount/Desktop/GothamBlogWebDev/BloggingPlatformAPI/bin/Debug/net9.0/Swashbuckle.AspNetCore.SwaggerGen.dll
+/Users/xeniauniaccount/Desktop/GothamBlogWebDev/BloggingPlatformAPI/bin/Debug/net9.0/Swashbuckle.AspNetCore.SwaggerUI.dll
