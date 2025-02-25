@@ -199,3 +199,4 @@
 /Users/xeniauniaccount/Desktop/GothamBlogWebDev/BloggingPlatformAPI/obj/Debug/net9.0/BloggingPlatformAPI.pdb
 /Users/xeniauniaccount/Desktop/GothamBlogWebDev/BloggingPlatformAPI/obj/Debug/net9.0/BloggingPlatformAPI.genruntimeconfig.cache
 /Users/xeniauniaccount/Desktop/GothamBlogWebDev/BloggingPlatformAPI/obj/Debug/net9.0/ref/BloggingPlatformAPI.dll
+/Users/xeniauniaccount/Desktop/GothamBlogWebDev/BloggingPlatformAPI/bin/Debug/net9.0/BCrypt.Net-Next.dll

@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using GothamPostBlogAPI.Services;
 using GothamPostBlogAPI.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using GothamPostBlogAPI.Data;  //This imports ApplicationDbContext
 
 namespace GothamPostBlogAPI.Controllers
 {
@@ -9,11 +12,58 @@ namespace GothamPostBlogAPI.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly UserService _userService;
-
-        public UserController(UserService userService)
+        //private fields that store references to services and the database context; only this class can use them
+        //once assigned in the constructor, the values cannot change 
+        private readonly ApplicationDbContext _context; //direct database operations 
+        private readonly AuthService _authService; //handles password hashing and JWT token generation 
+        private readonly UserService _userService; //business logic for users (CRUD operations)
+        public UserController(ApplicationDbContext context, AuthService authService, UserService userService)
         {
+            _context = context;
+            _authService = authService;
             _userService = userService;
+        }
+
+        //Register a new user
+        [AllowAnonymous] //Anyone can register 
+        [HttpPost("register")]
+        public async Task<ActionResult<User>> RegisterUser(User user)
+        {
+            //Check if email is already registered
+            if (await _context.Users.AnyAsync(user => user.Email == user.Email))
+            {
+                return BadRequest("Email is already registered.");
+            }
+
+            //Hash password before saving
+            user.PasswordHash = _authService.HashPassword(user.PasswordHash);
+
+            //Assign a default role if not specified
+            if (user.Role == 0)
+            {
+                user.Role = UserRole.Reader; //Default to "Reader" (lowest permissions)
+            }
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetUser), new { id = user.UserId }, user);
+        }
+
+        //Login a user
+        [AllowAnonymous] //Anyone can log in 
+        [HttpPost("login")]
+        public async Task<ActionResult<string>> LoginUser([FromBody] LoginRequest loginRequest)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(user => user.Email == loginRequest.Email);
+
+            if (user == null || !_authService.VerifyPassword(loginRequest.Password, user.PasswordHash))
+            {
+                return Unauthorized("Invalid credentials.");
+            }
+
+            var token = _authService.GenerateJwtToken(user);
+            return Ok(new { Token = token });
         }
 
         //GET all users (Only Admins can view the full list of users)
@@ -36,22 +86,18 @@ namespace GothamPostBlogAPI.Controllers
             }
 
             //Only the Admin or the Users themselves can access this information 
-            var loggedInUserId = int.Parse(User.Identity.Name); //Extract User ID from JWT
-            if (user.UserId != loggedInUserId && !User.IsInRole("Admin"))
+            var userIdString = User.Identity?.Name; //Extract User ID from JWT
+            if (string.IsNullOrEmpty(userIdString))
             {
-                return Forbid(); //Access denied
+                return Unauthorized();
             }
+            var loggedInUserId = int.Parse(userIdString);
 
+            if (loggedInUserId != id && !User.IsInRole("Admin"))
+            {
+                return Forbid(); // Prevent unauthorized access
+            }
             return user;
-        }
-
-        //POST: Create a new user (anyone can register - new users)
-        [AllowAnonymous] //anyone should be able to register without logging in 
-        [HttpPost]
-        public async Task<ActionResult<User>> CreateUser(User user)
-        {
-            var createdUser = await _userService.CreateUserAsync(user);
-            return CreatedAtAction(nameof(GetUser), new { id = createdUser.UserId }, createdUser);
         }
 
         //PUT: Update a user
@@ -92,5 +138,16 @@ namespace GothamPostBlogAPI.Controllers
             }
             return NoContent();
         }
+    }
+
+    //Login Request DTO (Data Transfer Objects) - class that defines what data the API expects from a request 
+    //DTOs 1.Prevents the client from sending unwanted data
+    //2.Ensure only necessary fields are passed in a request
+    //3.Keep models separate from request data (easier to modify later; decoupling)
+    //Instead of the full User model, only Email and Password used for login; prevents unncessary data sent in the API request - safer and more efficient 
+    public class LoginRequest
+    {
+        public string Email { get; set; }
+        public string Password { get; set; }
     }
 }
