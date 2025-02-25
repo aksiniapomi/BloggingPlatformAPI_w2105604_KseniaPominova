@@ -25,6 +25,8 @@ namespace GothamPostBlogAPI.Models
         public int BlogPostId { get; set; }  //FK to BlogPost
         public required BlogPost BlogPost { get; set; } //Access to the blog post  the comment is related to 
 
+        //Empty Constructor for EF Core
+        public Comment() { }
         //Full constrcutor to manually create the objects 
         public Comment(string content, User user, BlogPost blogPost)
         {

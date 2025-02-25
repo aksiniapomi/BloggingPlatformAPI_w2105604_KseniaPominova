@@ -18,6 +18,9 @@ namespace GothamPostBlogAPI.Models
         //List stores multiple blog posts; one category can have multiple blog posts 
         public List<BlogPost> BlogPosts { get; set; } // Navigation Property
 
+        //Empty Constructor for EF Core
+        public Category() { }
+
         public Category(string name)
         {
             Name = name;

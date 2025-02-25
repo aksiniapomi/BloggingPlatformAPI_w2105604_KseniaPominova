@@ -38,7 +38,8 @@ namespace GothamPostBlogAPI.Models
                                                      //A List of likes belonging to the post 
         public List<Like> Likes { get; set; } //A blog post can have multiple likes
 
-        //Constructor 
+        //Constructors
+        public BlogPost() { } //Empty constructor for EF Core
         public BlogPost(string title, string content, User user, Category category)
         {
             Title = title;
