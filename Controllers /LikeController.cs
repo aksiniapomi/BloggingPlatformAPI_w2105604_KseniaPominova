@@ -38,7 +38,7 @@ namespace GothamPostBlogAPI.Controllers
         }
 
         //POST: Like a blog post (Only Registered Users and Admins)
-        [Authorize(Roles = "Admin, RegisteredUser")] //If an unauthenticated User tries to access the post, 401 Unauthorized response will come up; reader will receive a 403 Forbidden Response 
+        [Authorize(Roles = $"{nameof(UserRole.Admin)},{nameof(UserRole.RegisteredUser)}")] //If an unauthenticated User tries to access the post, 401 Unauthorized response will come up; reader will receive a 403 Forbidden Response 
         [HttpPost] // /api/likes 
         public async Task<ActionResult<Like>> CreateLike(Like Like) //receives a Like object in the request body 
         {
@@ -59,7 +59,7 @@ namespace GothamPostBlogAPI.Controllers
         }
 
         //DELETE: Remove a like (Only Admin and Registered User)
-        [Authorize(Roles = "Admin,RegisteredUser")]
+        [Authorize(Roles = $"{nameof(UserRole.Admin)},{nameof(UserRole.RegisteredUser)}")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteLike(int id)
         {

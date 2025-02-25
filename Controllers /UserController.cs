@@ -24,7 +24,7 @@ namespace GothamPostBlogAPI.Controllers
             _userService = userService;
         }
 
-        //Register a new user
+        //Register a new user (default to Reader)
         [AllowAnonymous] //Anyone can register 
         [HttpPost("register")]
         public async Task<ActionResult<User>> RegisterUser(User user)
@@ -34,15 +34,11 @@ namespace GothamPostBlogAPI.Controllers
             {
                 return BadRequest("Email is already registered.");
             }
+            //Force the inital role to be reader to make sure new users are not allowed to decide their own role 
+            user.Role = UserRole.Reader; //Only Admin can manually change a user's role 
 
             //Hash password before saving
             user.PasswordHash = _authService.HashPassword(user.PasswordHash);
-
-            //Assign a default role if not specified
-            if (user.Role == 0)
-            {
-                user.Role = UserRole.Reader; //Default to "Reader" (lowest permissions)
-            }
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
@@ -67,7 +63,7 @@ namespace GothamPostBlogAPI.Controllers
         }
 
         //GET all users (Only Admins can view the full list of users)
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = nameof(UserRole.Admin))] //to avoid typos in admin/Admin and assign to the correct enum name 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
@@ -93,14 +89,14 @@ namespace GothamPostBlogAPI.Controllers
             }
             var loggedInUserId = int.Parse(userIdString);
 
-            if (loggedInUserId != id && !User.IsInRole("Admin"))
+            if (loggedInUserId != id && !User.IsInRole(nameof(UserRole.Admin)))
             {
                 return Forbid(); // Prevent unauthorized access
             }
             return user;
         }
 
-        //PUT: Update a user
+        //PUT: Update a user/ user profile details 
         //Users should be able to update their own profiles; Admins can update any profile
         [Authorize]
         [HttpPut("{id}")]
@@ -113,7 +109,7 @@ namespace GothamPostBlogAPI.Controllers
             }
             var loggedInUserId = int.Parse(userIdString);
 
-            if (loggedInUserId != id && !User.IsInRole("Admin"))
+            if (loggedInUserId != id && !User.IsInRole(nameof(UserRole.Admin)))
             {
                 return Forbid(); //Prevent updating another user’s account, unless - Admin
             }
@@ -126,8 +122,31 @@ namespace GothamPostBlogAPI.Controllers
             return NoContent();
         }
 
+        //PUT - Change a user's role (Only Admins can do this) Role Management 
+        [Authorize(Roles = nameof(UserRole.Admin))] //returns Admin as a compile-time constant string (retrieve the name of the enum value as a String)
+        [HttpPut("{id}/role")]
+        public async Task<IActionResult> UpdateUserRole(int id, [FromBody] UpdateUserRoleRequest request)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            user.Role = request.NewRole;
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        //DTO for updating user role (prevents unwanted data from being sent)
+        public class UpdateUserRoleRequest
+        {
+            public UserRole NewRole { get; set; }
+        }
+
         //DELETE: Remove a user (Only Admins)
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = nameof(UserRole.Admin))]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {

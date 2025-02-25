@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using GothamPostBlogAPI.Services;
 using GothamPostBlogAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GothamPostBlogAPI.Controllers
 {
@@ -15,14 +16,16 @@ namespace GothamPostBlogAPI.Controllers
             _categoryService = categoryService;
         }
 
-        //GET all categories
+        //GET all categories (Public)
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
         {
             return await _categoryService.GetAllCategoriesAsync();
         }
 
-        //GET a category by ID
+        //GET a category by ID (Public)
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<ActionResult<Category>> GetCategory(int id)
         {
@@ -34,7 +37,8 @@ namespace GothamPostBlogAPI.Controllers
             return category;
         }
 
-        // POST: Create a new category
+        // POST: Create a new category (Only Admins)
+        [Authorize(Roles = nameof(UserRole.Admin))]
         [HttpPost]
         public async Task<ActionResult<Category>> CreateCategory(Category category)
         {
@@ -42,7 +46,8 @@ namespace GothamPostBlogAPI.Controllers
             return CreatedAtAction(nameof(GetCategory), new { id = createdCategory.CategoryId }, createdCategory);
         }
 
-        //PUT: Update a category
+        //PUT: Update a category (Only Admins)
+        [Authorize(Roles = nameof(UserRole.Admin))]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCategory(int id, Category category)
         {
@@ -54,7 +59,8 @@ namespace GothamPostBlogAPI.Controllers
             return NoContent();
         }
 
-        //DELETE: Remove a category
+        //DELETE: Remove a category (Only Admins)
+        [Authorize(Roles = nameof(UserRole.Admin))]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(int id)
         {
@@ -67,3 +73,5 @@ namespace GothamPostBlogAPI.Controllers
         }
     }
 }
+
+

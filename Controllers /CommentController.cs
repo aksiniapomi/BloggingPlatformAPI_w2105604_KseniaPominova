@@ -38,7 +38,7 @@ namespace GothamPostBlogAPI.Controllers
         }
 
         //POST: Create a new comment (Only registered Users and Admins)
-        [Authorize(Roles = "Admin, RegisteredUser")]
+        [Authorize(Roles = $"{nameof(UserRole.Admin)},{nameof(UserRole.RegisteredUser)}")]
         [HttpPost]
         public async Task<ActionResult<Comment>> CreateComment(Comment comment)
         {
@@ -47,7 +47,7 @@ namespace GothamPostBlogAPI.Controllers
         }
 
         //PUT: Update a comment (Only registered Users and Admins)
-        [Authorize(Roles = "Admin, RegisteredUser")]
+        [Authorize(Roles = $"{nameof(UserRole.Admin)},{nameof(UserRole.RegisteredUser)}")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateComment(int id, Comment comment)
         {
@@ -60,7 +60,7 @@ namespace GothamPostBlogAPI.Controllers
         }
 
         //DELETE: Remove a comment (only Admins)
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = nameof(UserRole.Admin))]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteComment(int id)
         {

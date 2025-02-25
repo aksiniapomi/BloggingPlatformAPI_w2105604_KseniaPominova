@@ -49,7 +49,7 @@ namespace GothamPostBlogAPI.Controllers
         }
 
         // POST: Create a new blog post (only registered Users and Admins)
-        [Authorize(Roles = "Admin, RegisteredUser")]
+        [Authorize(Roles = $"{nameof(UserRole.Admin)},{nameof(UserRole.RegisteredUser)}")]
         [HttpPost] //route: POST /api/blogposts - endpoint of the API
         public async Task<ActionResult<BlogPost>> CreateBlogPost(BlogPost blogPost)
         {
@@ -58,7 +58,7 @@ namespace GothamPostBlogAPI.Controllers
         }
 
         // PUT: Update a blog post (only registered Users and Admins)
-        [Authorize(Roles = "Admin, RegisteredUser")]
+        [Authorize(Roles = $"{nameof(UserRole.Admin)},{nameof(UserRole.RegisteredUser)}")]
         [HttpPut("{id}")] //route: PUT /api/blogposts/1
         public async Task<IActionResult> UpdateBlogPost(int id, BlogPost blogPost)
         {
@@ -71,7 +71,7 @@ namespace GothamPostBlogAPI.Controllers
         }
 
         // DELETE: Remove a blog post (Only Admins)
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = nameof(UserRole.Admin))]
         [HttpDelete("{id}")] //route: DELETE /api/blogposts/1 
         public async Task<IActionResult> DeleteBlogPost(int id)
         {
