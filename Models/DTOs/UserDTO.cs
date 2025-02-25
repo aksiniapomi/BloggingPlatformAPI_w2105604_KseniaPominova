@@ -1,0 +1,17 @@
+using System.ComponentModel.DataAnnotations; //namespace provides data validation attributes to use in DTOs and models and enforce rules e.g. required fields, length restrictions 
+using GothamPostBlogAPI.Models;
+
+namespace GothamPostBlogAPI.Models.DTOs
+{
+    public class UserDTO
+    {
+        [Required, MaxLength(100)] //mandatory, cannit be null; length not greater than n; .DataAnnotations enforce this 
+        public string Username { get; set; }
+
+        [Required, EmailAddress] //ensure the emaill address format is valid 
+        public string Email { get; set; }
+
+        [Required, MinLength(6)] //ensure password is at least 6 characters 
+        public string Password { get; set; }
+    }
+}
