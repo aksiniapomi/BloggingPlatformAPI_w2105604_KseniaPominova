@@ -60,7 +60,12 @@ namespace GothamPostBlogAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(int id, User user)
         {
-            var loggedInUserId = int.Parse(User.Identity.Name); //Exract user ID from JWT
+            var userIdString = User.Identity?.Name;  //Exract user ID from JWT
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized(); //Prevents parsing null values; ensure the User is authenticated 
+            }
+            var loggedInUserId = int.Parse(userIdString);
 
             if (loggedInUserId != id && !User.IsInRole("Admin"))
             {

@@ -26,6 +26,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 //Add Authentication using JWT Bearer Token
 //JWT JSON Web Token securely autheticates users in web application 
 //Once user logs in, API generates JWT and send it to the client; JWT is included in the Authorisation header in future requests 
+var jwtSecretKey = configuration["Jwt:SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey is missing"); //if the JWT:Secret Key is missing, the app will throw an exception instead of null value 
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) //enable JWT authentication 
     .AddJwtBearer(options =>
     {
@@ -37,7 +39,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) //ena
             ValidateIssuerSigningKey = true, //Verify the token signature (signed with the secret key)
             ValidIssuer = configuration["Jwt:Issuer"], //From appsettings.json (who created the token)
             ValidAudience = configuration["Jwt:Audience"], //From appsettings.json (who should use the token)
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:SecretKey"])) //Secret key for signing 
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecretKey)) //Secret key for signing 
         };
     });
 

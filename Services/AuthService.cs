@@ -2,7 +2,7 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using GothamPostBlogAPI.Models; // Import User model
+using GothamPostBlogAPI.Models; //Import User model
 using Microsoft.IdentityModel.Tokens;
 
 namespace GothamPostBlogAPI.Services

@@ -14,12 +14,12 @@ namespace GothamPostBlogAPI.Models
     {
         [Key]
         public int LikeId { get; set; } //Primary Key, unique identifier (number) 
-
+        [Required]
         public int UserId { get; set; } //User is the Foreign Key (which User liked the post)
-        public User User { get; set; } //Navigation property, allows full access to the object for Entity Framework core 
-
+        public required User User { get; set; } //Navigation property, allows full access to the object for Entity Framework core 
+        [Required]
         public int BlogPostId { get; set; } //BlogPost is the Foreign Key 
-        public BlogPost BlogPost { get; set; }
+        public required BlogPost BlogPost { get; set; }
 
         public Like() { } //Parameterless constructor 
 
