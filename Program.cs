@@ -65,7 +65,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer(); //Enable Swagger for API testing
 builder.Services.AddSwaggerGen(options => //Adds Swagger UI
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Gotham Post Blog API", Version = "v1" });
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Gotham Post Blog API",
+        Version = "v1",
+        Description = "API for managing users, blog posts, comments, and likes.",
+    });
+
+
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -97,7 +104,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "GothamPostBlog API v1"); //where to find the JSON documentation for API 
+        c.RoutePrefix = "swagger"; // Swagger URL: http://localhost:5113/swagger -interface to test all API endpoints 
+    });
 }
 
 app.UseHttpsRedirection();
