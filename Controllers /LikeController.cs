@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using GothamPostBlogAPI.Services;
 using GothamPostBlogAPI.Models;
+using GothamPostBlogAPI.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
 
 namespace GothamPostBlogAPI.Controllers
@@ -40,7 +41,7 @@ namespace GothamPostBlogAPI.Controllers
         //POST: Like a blog post (Only Registered Users and Admins)
         [Authorize(Roles = $"{nameof(UserRole.Admin)},{nameof(UserRole.RegisteredUser)}")] //If an unauthenticated User tries to access the post, 401 Unauthorized response will come up; reader will receive a 403 Forbidden Response 
         [HttpPost] // /api/likes 
-        public async Task<ActionResult<Like>> CreateLike(Like Like) //receives a Like object in the request body 
+        public async Task<ActionResult<Like>> CreateLike(LikeDTO LikeDto) //receives a Like object in the request body 
         {
             //Extract user ID from JWT
             //Prevent errors when User.Identity.Name is null 
@@ -52,9 +53,9 @@ namespace GothamPostBlogAPI.Controllers
                 return Unauthorized(); //Prevents parsing null values
             }
             //Convert user ID from string to int 
-            Like.UserId = int.Parse(userIdString); //assign the correct UserId to the Like object; ensure the user cannot like on behalf of other user 
+            var UserId = int.Parse(userIdString); //assign the correct UserId to the Like object; ensure the user cannot like on behalf of other user 
             //Create a new Like object 
-            var createdLike = await _likeService.CreateLikeAsync(Like); //calls likeService to handle database operations; saves the Like in the database and returns saved Like object
+            var createdLike = await _likeService.CreateLikeAsync(LikeDto, userId); //calls likeService to handle database operations; saves the Like in the database and returns saved Like object
             return CreatedAtAction(nameof(GetLikes), new { id = createdLike.LikeId }, createdLike); //incldues a refrence to the new like; nameof(GetLikes) points to the method that retrieves all likes
         }
 
@@ -63,12 +64,13 @@ namespace GothamPostBlogAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteLike(int id)
         {
+            //Extract User id from JWT
             var userIdString = User.Identity?.Name;
             if (string.IsNullOrEmpty(userIdString))
             {
                 return Unauthorized(); //Prevents parsing null values
             }
-            var userId = int.Parse(User.Identity.Name); //Extract logged-in user ID from JWT 
+            var userId = int.Parse(userIdString); //Extract logged-in user ID from JWT 
 
             var success = await _likeService.DeleteLikeAsync(id, userId);
             if (!success)
