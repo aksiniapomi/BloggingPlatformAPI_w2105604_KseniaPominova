@@ -1,5 +1,6 @@
 using GothamPostBlogAPI.Data;
 using GothamPostBlogAPI.Models;
+using GothamPostBlogAPI.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
 
 namespace GothamPostBlogAPI.Services
@@ -7,10 +8,12 @@ namespace GothamPostBlogAPI.Services
     public class UserService
     {
         private readonly ApplicationDbContext _context;
+        private readonly AuthService _authService;
 
-        public UserService(ApplicationDbContext context)
+        public UserService(ApplicationDbContext context, AuthService authService)
         {
             _context = context;
+            _authService = authService;
         }
 
         //Get all users
@@ -41,16 +44,28 @@ namespace GothamPostBlogAPI.Services
         }
 
         //Update an existing user
-        public async Task<bool> UpdateUserAsync(int id, User updatedUser)
+        public async Task<bool> UpdateUserAsync(int id, UpdateUserDTO userDto)
         {
-            if (id != updatedUser.UserId)
+            var user = await _context.Users.FindAsync(id); //search for the user by the id in the database
+            if (user == null)
             {
-                return false; //User ID mismatch
+                return false; //if doesn't exist - return false (update failed)
             }
 
-            _context.Entry(updatedUser).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-            return true;
+            //Update only fields provided
+            //ensure only non-null values are updated and prevent overwritting existing values with null
+            if (!string.IsNullOrEmpty(userDto.Username))
+                user.Username = userDto.Username;
+
+            if (!string.IsNullOrEmpty(userDto.Email))
+                user.Email = userDto.Email;
+
+            if (!string.IsNullOrEmpty(userDto.Password))
+                user.PasswordHash = _authService.HashPassword(userDto.Password); //hash new password before saving (if changed)
+
+            _context.Users.Update(user); //mark the user as “modified” so Entity Framework updates it in the database
+            await _context.SaveChangesAsync(); //save changes asynchronously to the database
+            return true; //return true if sucessfull 
         }
 
         //Delete a user

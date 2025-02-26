@@ -1,5 +1,6 @@
 using GothamPostBlogAPI.Data; //import database context ApplicationDbContext to interact with the database 
 using GothamPostBlogAPI.Models; //import models to use in the services 
+using GothamPostBlogAPI.Models.DTOs;
 using Microsoft.EntityFrameworkCore; //used for database operations 
 
 namespace GothamPostBlogAPI.Services
@@ -39,25 +40,53 @@ namespace GothamPostBlogAPI.Services
         }
 
         //Create a new blog post
-        public async Task<BlogPost> CreateBlogPostAsync(BlogPost blogPost)
+        public async Task<BlogPost> CreateBlogPostAsync(BlogPostDTO blogPostDto, int userId)
         {
-            blogPost.DateCreated = DateTime.UtcNow;
-            _context.BlogPosts.Add(blogPost);
+            //Convert DTO to Model inside the Service
+            var newBlogPost = new BlogPost
+            {
+                Title = blogPostDto.Title,
+                Content = blogPostDto.Content,
+                UserId = userId, //Assign User ID from JWT
+                CategoryId = blogPostDto.CategoryId
+            };
+
+            _context.BlogPosts.Add(newBlogPost);
             await _context.SaveChangesAsync();
-            return blogPost;
+            return newBlogPost;
         }
 
         //Update an existing blog post
-        public async Task<bool> UpdateBlogPostAsync(int id, BlogPost updatedBlogPost) //returns true or false
+        public async Task<bool> UpdateBlogPostAsync(int id, BlogPostDTO blogPostDto, int userId) //returns true or false
         {
-            if (id != updatedBlogPost.BlogPostId) //Compares the id parameter with updatedBlogPost.BlogPostId
+            var existingBlogPost = await _context.BlogPosts.FindAsync(id); //look up the blog post by id in the database 
+            if (existingBlogPost == null)
             {
-                return false; // ID mismatch
+                return false; //if the post doesn't exist - return false 
             }
 
-            _context.Entry(updatedBlogPost).State = EntityState.Modified; //mark the entity as modified 
-            await _context.SaveChangesAsync(); //when called EF Core updates the database asynchronously
-            return true; //if update was successful return true 
+            //Ensure only the original author or Admin can update the post
+            if (existingBlogPost.UserId != userId && !UserIsAdmin(userId)) //if the logged-in user in not the original author or the user is not admin, they cannot edit the post 
+            {
+                return false; //deny update request 
+            }
+
+            //Convert DTO to Model inside the Service to update only specific fields 
+            //enusre the userId remains unchanged (the original auhtor remains the owner)
+            existingBlogPost.Title = blogPostDto.Title;
+            existingBlogPost.Content = blogPostDto.Content;
+            existingBlogPost.CategoryId = blogPostDto.CategoryId;
+
+            _context.BlogPosts.Update(existingBlogPost); //mark the post as modified 
+            await _context.SaveChangesAsync(); //save changes async in hte database
+            return true; //true to indicate operation sucessful 
+        }
+
+        //Helper Method to Check if the User is an Admin
+        private bool UserIsAdmin(int userId)
+        {
+            var user = _context.Users.Find(userId); //look up user by id 
+            return user != null && user.Role == UserRole.Admin; //check the user exists and is an Admin 
         }
 
         //Delete a blog post

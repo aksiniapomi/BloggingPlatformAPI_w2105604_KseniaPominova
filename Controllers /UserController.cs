@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using GothamPostBlogAPI.Services;
 using GothamPostBlogAPI.Models;
+using GothamPostBlogAPI.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
 using GothamPostBlogAPI.Data;  //This imports ApplicationDbContext
 
 namespace GothamPostBlogAPI.Controllers
@@ -16,7 +16,8 @@ namespace GothamPostBlogAPI.Controllers
         //once assigned in the constructor, the values cannot change 
         private readonly ApplicationDbContext _context; //direct database operations 
         private readonly AuthService _authService; //handles password hashing and JWT token generation 
-        private readonly UserService _userService; //business logic for users (CRUD operations)
+        private readonly UserService _userService; //injected via the constructor so that the controller can use methods from UserService
+
         public UserController(ApplicationDbContext context, AuthService authService, UserService userService)
         {
             _context = context;
@@ -24,21 +25,25 @@ namespace GothamPostBlogAPI.Controllers
             _userService = userService;
         }
 
-        //Register a new user (default to Reader)
+        //Register a new user (default to Reader) using DTOs
         [AllowAnonymous] //Anyone can register 
         [HttpPost("register")]
-        public async Task<ActionResult<User>> RegisterUser(User user)
+        public async Task<ActionResult<User>> RegisterUser(UserDTO userDto)
         {
             //Check if email is already registered
-            if (await _context.Users.AnyAsync(user => user.Email == user.Email))
+            if (await _context.Users.AnyAsync(user => user.Email == userDto.Email))
             {
                 return BadRequest("Email is already registered.");
             }
-            //Force the inital role to be reader to make sure new users are not allowed to decide their own role 
-            user.Role = UserRole.Reader; //Only Admin can manually change a user's role 
 
-            //Hash password before saving
-            user.PasswordHash = _authService.HashPassword(user.PasswordHash);
+            var user = new User(userDto.Username, userDto.Email, _authService.HashPassword(userDto.Password), UserRole.Reader)
+            {
+                Username = userDto.Username,
+                Email = userDto.Email,
+                PasswordHash = _authService.HashPassword(userDto.Password),
+                Role = UserRole.Reader  //Prevents users from setting their role
+            }
+            ;
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
@@ -49,7 +54,7 @@ namespace GothamPostBlogAPI.Controllers
         //Login a user
         [AllowAnonymous] //Anyone can log in 
         [HttpPost("login")]
-        public async Task<ActionResult<string>> LoginUser([FromBody] LoginRequest loginRequest)
+        public async Task<ActionResult<string>> LoginUser([FromBody] LoginRequestDTO loginRequest)
         {
             var user = await _context.Users.FirstOrDefaultAsync(user => user.Email == loginRequest.Email);
 
@@ -75,7 +80,7 @@ namespace GothamPostBlogAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
-            var user = await _userService.GetUserByIdAsync(id);
+            var user = await _userService.GetUserByIdAsync(id); //encapsulated logic inside UserService for better separation of concerns
             if (user == null)
             {
                 return NotFound();
@@ -100,7 +105,7 @@ namespace GothamPostBlogAPI.Controllers
         //Users should be able to update their own profiles; Admins can update any profile
         [Authorize]
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, User user)
+        public async Task<IActionResult> UpdateUser(int id, UpdateUserDTO userDto)
         {
             var userIdString = User.Identity?.Name;  //Exract user ID from JWT
             if (string.IsNullOrEmpty(userIdString))
@@ -114,7 +119,7 @@ namespace GothamPostBlogAPI.Controllers
                 return Forbid(); //Prevent updating another user’s account, unless - Admin
             }
 
-            var success = await _userService.UpdateUserAsync(id, user);
+            var success = await _userService.UpdateUserAsync(id, userDto);
             if (!success)
             {
                 return BadRequest();
@@ -125,7 +130,7 @@ namespace GothamPostBlogAPI.Controllers
         //PUT - Change a user's role (Only Admins can do this) Role Management 
         [Authorize(Roles = nameof(UserRole.Admin))] //returns Admin as a compile-time constant string (retrieve the name of the enum value as a String)
         [HttpPut("{id}/role")]
-        public async Task<IActionResult> UpdateUserRole(int id, [FromBody] UpdateUserRoleRequest request)
+        public async Task<IActionResult> UpdateUserRole(int id, [FromBody] UpdateUserRoleDTO request)
         {
             var user = await _context.Users.FindAsync(id);
             if (user == null)
@@ -137,12 +142,6 @@ namespace GothamPostBlogAPI.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
-
-        //DTO for updating user role (prevents unwanted data from being sent)
-        public class UpdateUserRoleRequest
-        {
-            public UserRole NewRole { get; set; }
         }
 
         //DELETE: Remove a user (Only Admins)
@@ -158,15 +157,6 @@ namespace GothamPostBlogAPI.Controllers
             return NoContent();
         }
     }
-
-    //Login Request DTO (Data Transfer Objects) - class that defines what data the API expects from a request 
-    //DTOs 1.Prevents the client from sending unwanted data
-    //2.Ensure only necessary fields are passed in a request
-    //3.Keep models separate from request data (easier to modify later; decoupling)
-    //Instead of the full User model, only Email and Password used for login; prevents unncessary data sent in the API request - safer and more efficient 
-    public class LoginRequest
-    {
-        public string Email { get; set; }
-        public string Password { get; set; }
-    }
 }
+
+

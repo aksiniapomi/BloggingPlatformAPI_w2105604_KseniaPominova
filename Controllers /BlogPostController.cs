@@ -4,6 +4,7 @@
 using Microsoft.AspNetCore.Mvc; //allows to create a web API Controller 
 using GothamPostBlogAPI.Services; //imports the service layer (BlogPostService)
 using GothamPostBlogAPI.Models; //imports the data models (BlogPost)
+using GothamPostBlogAPI.Models.DTOs;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -51,18 +52,36 @@ namespace GothamPostBlogAPI.Controllers
         // POST: Create a new blog post (only registered Users and Admins)
         [Authorize(Roles = $"{nameof(UserRole.Admin)},{nameof(UserRole.RegisteredUser)}")]
         [HttpPost] //route: POST /api/blogposts - endpoint of the API
-        public async Task<ActionResult<BlogPost>> CreateBlogPost(BlogPost blogPost)
+        public async Task<ActionResult<BlogPost>> CreateBlogPost(BlogPostDTO blogPostDto) //use DTO instead of Model because only title,content and categoryId is needed
         {
-            var createdPost = await _blogPostService.CreateBlogPostAsync(blogPost); //calls CreateBlogPostAsync(blogPost) in BlogPostService
+            //Extract user ID from JWT (only the logged-in user can create a post)
+            var userIdString = User.Identity?.Name;
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+            var userId = int.Parse(userIdString);
+
+            //Pass DTO and UserId to Service for Model conversion 
+            var createdPost = await _blogPostService.CreateBlogPostAsync(blogPostDto, userId);
             return CreatedAtAction(nameof(GetBlogPost), new { id = createdPost.BlogPostId }, createdPost); //return 201 Created with new blog post 
         }
 
         // PUT: Update a blog post (only registered Users and Admins)
         [Authorize(Roles = $"{nameof(UserRole.Admin)},{nameof(UserRole.RegisteredUser)}")]
         [HttpPut("{id}")] //route: PUT /api/blogposts/1
-        public async Task<IActionResult> UpdateBlogPost(int id, BlogPost blogPost)
+        public async Task<IActionResult> UpdateBlogPost(int id, BlogPostDTO blogPostDto) //use DTO
         {
-            var success = await _blogPostService.UpdateBlogPostAsync(id, blogPost); //calls UpdateBlogPostAsync(id, blogPost) in BlogPostService
+            //Extract user ID from JWT
+            var userIdString = User.Identity?.Name;
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+            var userId = int.Parse(userIdString);
+
+            //Pass DTO and User Id to Service 
+            var success = await _blogPostService.UpdateBlogPostAsync(id, blogPostDto, userId);
             if (!success)
             {
                 return BadRequest(); //returns 400 Bad Request if IDs don’t match
