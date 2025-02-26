@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using GothamPostBlogAPI.Services;
 using GothamPostBlogAPI.Models;
+using GothamPostBlogAPI.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
 
 namespace GothamPostBlogAPI.Controllers
@@ -40,18 +41,18 @@ namespace GothamPostBlogAPI.Controllers
         // POST: Create a new category (Only Admins)
         [Authorize(Roles = nameof(UserRole.Admin))]
         [HttpPost]
-        public async Task<ActionResult<Category>> CreateCategory(Category category)
+        public async Task<ActionResult<Category>> CreateCategory(CategoryDTO categoryDto)
         {
-            var createdCategory = await _categoryService.CreateCategoryAsync(category);
+            var createdCategory = await _categoryService.CreateCategoryAsync(categoryDto);
             return CreatedAtAction(nameof(GetCategory), new { id = createdCategory.CategoryId }, createdCategory);
         }
 
         //PUT: Update a category (Only Admins)
         [Authorize(Roles = nameof(UserRole.Admin))]
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCategory(int id, Category category)
+        public async Task<IActionResult> UpdateCategory(int id, CategoryDTO categoryDto)
         {
-            var success = await _categoryService.UpdateCategoryAsync(id, category);
+            var success = await _categoryService.UpdateCategoryAsync(id, categoryDto);
             if (!success)
             {
                 return BadRequest();

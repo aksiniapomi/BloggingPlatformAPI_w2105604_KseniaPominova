@@ -1,6 +1,9 @@
 using GothamPostBlogAPI.Data;
 using GothamPostBlogAPI.Models;
+using GothamPostBlogAPI.Models.DTOs;
 using Microsoft.EntityFrameworkCore;
+
+//Only Admin can create, update, or delete categories
 
 namespace GothamPostBlogAPI.Services
 {
@@ -28,22 +31,30 @@ namespace GothamPostBlogAPI.Services
         }
 
         //Create a new category
-        public async Task<Category> CreateCategoryAsync(Category category)
+        public async Task<Category> CreateCategoryAsync(CategoryDTO categoryDto)
         {
-            _context.Categories.Add(category);
+            var newCategory = new Category
+            {
+                Name = categoryDto.Name
+            };
+
+            _context.Categories.Add(newCategory);
             await _context.SaveChangesAsync();
-            return category;
+            return newCategory;
         }
 
         //Update an existing category
-        public async Task<bool> UpdateCategoryAsync(int id, Category updatedCategory)
+        public async Task<bool> UpdateCategoryAsync(int id, CategoryDTO categoryDto)
         {
-            if (id != updatedCategory.CategoryId)
+            var existingCategory = await _context.Categories.FindAsync(id);
+            if (existingCategory == null)
             {
-                return false; //ID mismatch
+                return false;
             }
 
-            _context.Entry(updatedCategory).State = EntityState.Modified;
+            existingCategory.Name = categoryDto.Name;
+
+            _context.Categories.Update(existingCategory);
             await _context.SaveChangesAsync();
             return true;
         }
