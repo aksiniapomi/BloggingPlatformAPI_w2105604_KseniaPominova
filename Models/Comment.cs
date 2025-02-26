@@ -20,10 +20,10 @@ namespace GothamPostBlogAPI.Models
 
         //Foreign Keys
         public int UserId { get; set; }  //FK to User
-        public required User User { get; set; } //Retrieve the comment author's details
+        public User? User { get; set; } //Retrieve the comment author's details
 
         public int BlogPostId { get; set; }  //FK to BlogPost
-        public required BlogPost BlogPost { get; set; } //Access to the blog post  the comment is related to 
+        public BlogPost? BlogPost { get; set; } //Access to the blog post  the comment is related to 
 
         //Empty Constructor for EF Core
         public Comment() { }

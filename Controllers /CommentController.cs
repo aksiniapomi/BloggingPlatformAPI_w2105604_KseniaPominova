@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using GothamPostBlogAPI.Services;
 using GothamPostBlogAPI.Models;
 using Microsoft.AspNetCore.Authorization;
+using GothamPostBlogAPI.Models.DTOs;
 
 namespace GothamPostBlogAPI.Controllers
 {
@@ -40,18 +41,34 @@ namespace GothamPostBlogAPI.Controllers
         //POST: Create a new comment (Only registered Users and Admins)
         [Authorize(Roles = $"{nameof(UserRole.Admin)},{nameof(UserRole.RegisteredUser)}")]
         [HttpPost]
-        public async Task<ActionResult<Comment>> CreateComment(Comment comment)
+        public async Task<ActionResult<Comment>> CreateComment(CommentDTO commentDto)
         {
-            var createdComment = await _commentService.CreateCommentAsync(comment);
+            //Extract User ID from JWT
+            var userIdString = User.Identity?.Name;
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+            var userId = int.Parse(userIdString);
+
+            var createdComment = await _commentService.CreateCommentAsync(commentDto, userId);
             return CreatedAtAction(nameof(GetComment), new { id = createdComment.CommentId }, createdComment);
         }
 
         //PUT: Update a comment (Only registered Users and Admins)
         [Authorize(Roles = $"{nameof(UserRole.Admin)},{nameof(UserRole.RegisteredUser)}")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateComment(int id, Comment comment)
+        public async Task<IActionResult> UpdateComment(int id, CommentDTO commentDto)
         {
-            var success = await _commentService.UpdateCommentAsync(id, comment);
+            //Extract User ID from JWT
+            var userIdString = User.Identity?.Name;
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+            var userId = int.Parse(userIdString);
+
+            var success = await _commentService.UpdateCommentAsync(id, commentDto, userId);
             if (!success)
             {
                 return BadRequest();
@@ -64,7 +81,15 @@ namespace GothamPostBlogAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteComment(int id)
         {
-            var success = await _commentService.DeleteCommentAsync(id);
+            //Extract User ID from JWT
+            var userIdString = User.Identity?.Name;
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+            var userId = int.Parse(userIdString);
+
+            var success = await _commentService.DeleteCommentAsync(id, userId);
             if (!success)
             {
                 return NotFound();
