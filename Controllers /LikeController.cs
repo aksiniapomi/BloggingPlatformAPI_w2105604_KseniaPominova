@@ -41,7 +41,7 @@ namespace GothamPostBlogAPI.Controllers
         //POST: Like a blog post (Only Registered Users and Admins)
         [Authorize(Roles = $"{nameof(UserRole.Admin)},{nameof(UserRole.RegisteredUser)}")] //If an unauthenticated User tries to access the post, 401 Unauthorized response will come up; reader will receive a 403 Forbidden Response 
         [HttpPost] // /api/likes 
-        public async Task<ActionResult<Like>> CreateLike(LikeDTO LikeDto) //receives a Like object in the request body 
+        public async Task<ActionResult<Like>> CreateLike(LikeDTO likeDto) //receives a Like object in the request body 
         {
             //Extract user ID from JWT
             //Prevent errors when User.Identity.Name is null 
@@ -53,9 +53,9 @@ namespace GothamPostBlogAPI.Controllers
                 return Unauthorized(); //Prevents parsing null values
             }
             //Convert user ID from string to int 
-            var UserId = int.Parse(userIdString); //assign the correct UserId to the Like object; ensure the user cannot like on behalf of other user 
+            var userId = int.Parse(userIdString); //assign the correct UserId to the Like object; ensure the user cannot like on behalf of other user 
             //Create a new Like object 
-            var createdLike = await _likeService.CreateLikeAsync(LikeDto, userId); //calls likeService to handle database operations; saves the Like in the database and returns saved Like object
+            var createdLike = await _likeService.CreateLikeAsync(likeDto, userId); //calls likeService to handle database operations; saves the Like in the database and returns saved Like object
             return CreatedAtAction(nameof(GetLikes), new { id = createdLike.LikeId }, createdLike); //incldues a refrence to the new like; nameof(GetLikes) points to the method that retrieves all likes
         }
 
