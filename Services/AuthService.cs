@@ -37,7 +37,7 @@ namespace GothamPostBlogAPI.Services
         public string GenerateJwtToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes("YourSuperSecretKey123!"); //Secret key
+            var key = Encoding.UTF8.GetBytes("ThisIsA32CharacterLongSuperSecretKey!"); //Secret key
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {

@@ -46,6 +46,8 @@ namespace GothamPostBlogAPI.Models
         public List<Like> Likes { get; set; }
 
 
+        //EF Core requires a parameterless constructor
+        public User() { }
         public User(string username, string email, string passwordHash, UserRole role)
         {
             Username = username;
@@ -58,8 +60,6 @@ namespace GothamPostBlogAPI.Models
         }
     }
 }
-
-
 
 // var adminUser = new User {
 //     Username = "Admin123",

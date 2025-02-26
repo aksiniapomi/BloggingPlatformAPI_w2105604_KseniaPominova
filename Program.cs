@@ -2,14 +2,14 @@
 using GothamPostBlogAPI.Data; //Allow access to ApplicationDbContext.cs to handle database operations (project files)
 using GothamPostBlogAPI.Services; //Business logic services import (project files)
 using Microsoft.AspNetCore.Authentication.JwtBearer; //Enables JWT authentication to verify users with JWT tokens (security)
-using Microsoft.AspNetCore.Authorization; //allows to control to API endpoints by defining access levels 
-using Microsoft.AspNetCore.Builder; //Configuration middleware (authetication, routing, Swagger; core API)
-using Microsoft.AspNetCore.Hosting; //Allows API to run as a web serivce 
+using Microsoft.AspNetCore.Authorization; //Allows to control API endpoints by defining access levels 
+using Microsoft.AspNetCore.Builder; //Configuration middleware (authentication, routing, Swagger; core API)
+using Microsoft.AspNetCore.Hosting; //Allows API to run as a web service 
 using Microsoft.AspNetCore.Mvc; //Handles API Controllers (how requests and responses are managed; core API)
 using Microsoft.EntityFrameworkCore; //Enable database connectivity using EF Core 
 using Microsoft.Extensions.Configuration; //Loads app settings from appsettings.json (core API)
 using Microsoft.Extensions.DependencyInjection; //Register services (DbContext, AuthService, etc; core API)
-using Microsoft.Extensions.Hosting; //Manages API lifecycle (start,stop,or restart; core API)
+using Microsoft.Extensions.Hosting; //Manages API lifecycle (start, stop, or restart; core API)
 using Microsoft.IdentityModel.Tokens; //Verifies JWT validity 
 using Microsoft.OpenApi.Models; //Enables Swagger for API documentation and testing directly from a browser
 using System.Text; //Converts secret keys into bytes for token signing 
@@ -24,11 +24,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(configuration.GetConnectionString("DefaultConnection"))); //Usage of EF Core to let the API communicate with SQLite to store and retrieve data
 
 //Add Authentication using JWT Bearer Token
-//JWT JSON Web Token securely autheticates users in web application 
-//Once user logs in, API generates JWT and send it to the client; JWT is included in the Authorisation header in future requests 
-var jwtSecretKey = configuration["Jwt:SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey is missing"); //if the JWT:Secret Key is missing, the app will throw an exception instead of null value 
+//JWT JSON Web Token securely authenticates users in web application 
+//Once user logs in, API generates JWT and send it to the client; JWT is included in the Authorization header in future requests 
+var jwtSecretKey = configuration["Jwt:SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey is missing"); //If the JWT:Secret Key is missing, the app will throw an exception instead of null value 
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) //enable JWT authentication 
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) //Enable JWT authentication 
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
@@ -72,7 +72,6 @@ builder.Services.AddSwaggerGen(options => //Adds Swagger UI
         Description = "API for managing users, blog posts, comments, and likes.",
     });
 
-
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -106,8 +105,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "GothamPostBlog API v1"); //where to find the JSON documentation for API 
-        c.RoutePrefix = "swagger"; // Swagger URL: http://localhost:5113/swagger -interface to test all API endpoints 
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "GothamPostBlog API v1"); //Where to find the JSON documentation for API 
+        c.RoutePrefix = "swagger"; // Swagger URL: http://localhost:5113/swagger -Interface to test all API endpoints 
     });
 }
 
@@ -124,4 +123,4 @@ app.Run();
 //API sends the JWT back to client 
 //Client stores the JWT locally/ sends Authorization headers 
 //Future requests include the JWT 
-//API will verify the JWT before allowing the access 
+//API will verify the JWT before allowing access

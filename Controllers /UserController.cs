@@ -25,25 +25,28 @@ namespace GothamPostBlogAPI.Controllers
             _userService = userService;
         }
 
-        //Register a new user (default to Reader) using DTOs
-        [AllowAnonymous] //Anyone can register 
+        // Register a new user (allows specifying role for Admins, defaults others to Reader)
+        [AllowAnonymous] // Anyone can register
         [HttpPost("register")]
         public async Task<ActionResult<User>> RegisterUser(UserDTO userDto)
         {
-            //Check if email is already registered
+            // Check if email is already registered
             if (await _context.Users.AnyAsync(user => user.Email == userDto.Email))
             {
                 return BadRequest("Email is already registered.");
             }
 
-            var user = new User(userDto.Username, userDto.Email, _authService.HashPassword(userDto.Password), UserRole.Reader)
+            // Assign role properly (default to Reader if not specified)
+            var role = userDto.Role ?? UserRole.Reader; //Ensures role is always set
+
+            //Explicitly set required properties
+            var user = new User
             {
                 Username = userDto.Username,
                 Email = userDto.Email,
-                PasswordHash = _authService.HashPassword(userDto.Password),
-                Role = UserRole.Reader  //Prevents users from setting their role
-            }
-            ;
+                PasswordHash = _authService.HashPassword(userDto.Password), //Hash password before saving
+                Role = role //Assign role (Admin can specify, others default to Reader)
+            };
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
@@ -107,7 +110,7 @@ namespace GothamPostBlogAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(int id, UpdateUserDTO userDto)
         {
-            var userIdString = User.Identity?.Name;  //Exract user ID from JWT
+            var userIdString = User.Identity?.Name;  //Extract user ID from JWT
             if (string.IsNullOrEmpty(userIdString))
             {
                 return Unauthorized(); //Prevents parsing null values; ensure the User is authenticated 
@@ -158,5 +161,3 @@ namespace GothamPostBlogAPI.Controllers
         }
     }
 }
-
-

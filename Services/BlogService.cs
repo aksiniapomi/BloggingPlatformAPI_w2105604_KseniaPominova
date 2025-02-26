@@ -72,6 +72,7 @@ namespace GothamPostBlogAPI.Services
             }
 
             //Convert DTO to Model inside the Service to update only specific fields 
+            //Prevent overwritting sensitive fields 
             //enusre the userId remains unchanged (the original auhtor remains the owner)
             existingBlogPost.Title = blogPostDto.Title;
             existingBlogPost.Content = blogPostDto.Content;
