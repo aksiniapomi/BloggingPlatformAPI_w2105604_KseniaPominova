@@ -26,7 +26,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 //Add Authentication using JWT Bearer Token
 //JWT JSON Web Token securely authenticates users in web application 
 //Once user logs in, API generates JWT and send it to the client; JWT is included in the Authorization header in future requests 
-var jwtSecretKey = configuration["Jwt:SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey is missing"); //If the JWT:Secret Key is missing, the app will throw an exception instead of null value 
+var jwtSecretKey = configuration["Jwt:SecretKey"];
+if (string.IsNullOrEmpty(jwtSecretKey) || jwtSecretKey.Length < 32)
+{
+    throw new InvalidOperationException("JWT SecretKey is too short! It must be at least 32 characters.");
+} //If the JWT:Secret Key is missing, the app will throw an exception instead of null value 
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) //Enable JWT authentication 
     .AddJwtBearer(options =>
@@ -39,7 +43,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) //Ena
             ValidateIssuerSigningKey = true, //Verify the token signature (signed with the secret key)
             ValidIssuer = configuration["Jwt:Issuer"], //From appsettings.json (who created the token)
             ValidAudience = configuration["Jwt:Audience"], //From appsettings.json (who should use the token)
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecretKey)) //Secret key for signing 
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:SecretKey"])) //Secret key for signing 
         };
     });
 
@@ -109,6 +113,9 @@ if (app.Environment.IsDevelopment())
         c.RoutePrefix = "swagger"; // Swagger URL: http://localhost:5113/swagger -Interface to test all API endpoints 
     });
 }
+
+// Enable routing
+app.UseRouting();
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
