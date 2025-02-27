@@ -38,20 +38,32 @@ namespace GothamPostBlogAPI.Controllers
 
         // GET a single blog post by ID (Public access to all users)
         [AllowAnonymous]
-        [HttpGet("{id}")] //returns the blog posts defined by the id number GET /api/blogposts/1 
-        public async Task<ActionResult<BlogPost>> GetBlogPost(int id)
+        [HttpGet("{id}")] // Returns the blog post defined by the ID number (GET /api/blogposts/1)
+        public async Task<ActionResult<BlogPostResponseDTO>> GetBlogPost(int id)
         {
-            var blogPost = await _blogPostService.GetBlogPostByIdAsync(id); //calls the GetBlogPostByIdAsync in BlogPostService
+            var blogPost = await _blogPostService.GetBlogPostByIdAsync(id); // Calls GetBlogPostByIdAsync in BlogPostService
             if (blogPost == null)
             {
-                return NotFound(); //return 404 Not Found if no matching posts found 
+                return NotFound(); // Return 404 Not Found if no matching post is found
             }
-            return blogPost;
+
+            //Convert the `BlogPost` entity into `BlogPostResponseDTO` before returning
+            var blogPostDto = new BlogPostResponseDTO
+            {
+                BlogPostId = blogPost.BlogPostId, // Assign unique post ID
+                Title = blogPost.Title, // Assign title
+                Content = blogPost.Content, // Assign post content
+                DateCreated = blogPost.DateCreated, // Assign the date the post was created
+                UserId = blogPost.UserId, // Assign the ID of the user who created the post
+                Username = blogPost.User?.Username // Assign the username of the author (avoid full User object)
+            };
+
+            return Ok(blogPostDto); // Return the DTO (prevents exposing unnecessary user details)
         }
 
         // POST: Create a new blog post (only registered Users and Admins)
         [Authorize(Roles = $"{nameof(UserRole.Admin)},{nameof(UserRole.RegisteredUser)}")]
-        [HttpPost] //route: POST /api/blogposts - endpoint of the API
+        [HttpPost] //route: POST /api/blogpost - endpoint of the API
         public async Task<ActionResult<BlogPost>> CreateBlogPost(BlogPostDTO blogPostDto) //use DTO instead of Model because only title,content and categoryId is needed
         {
             //Extract user ID from JWT (only the logged-in user can create a post)

@@ -13,6 +13,7 @@ using Microsoft.Extensions.Hosting; //Manages API lifecycle (start, stop, or res
 using Microsoft.IdentityModel.Tokens; //Verifies JWT validity 
 using Microsoft.OpenApi.Models; //Enables Swagger for API documentation and testing directly from a browser
 using System.Text; //Converts secret keys into bytes for token signing 
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,7 +64,10 @@ builder.Services.AddScoped<CommentService>();
 builder.Services.AddScoped<LikeService>();
 
 //Add Controllers
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+    });
 
 // Configure Swagger for API Documentation; automatic API docs generation and testing 
 builder.Services.AddEndpointsApiExplorer(); //Enable Swagger for API testing

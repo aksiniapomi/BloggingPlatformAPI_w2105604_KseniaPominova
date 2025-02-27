@@ -56,7 +56,7 @@ namespace GothamPostBlogAPI.Controllers
 
         //Login a user
         [AllowAnonymous] //Anyone can log in 
-        [HttpPost("login")]
+        [HttpPost("login")]  //POST /api/auth/register
         public async Task<ActionResult<string>> LoginUser([FromBody] LoginRequestDTO loginRequest)
         {
             var user = await _context.Users.FirstOrDefaultAsync(user => user.Email == loginRequest.Email);
