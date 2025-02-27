@@ -14,6 +14,7 @@ using Microsoft.IdentityModel.Tokens; //Verifies JWT validity
 using Microsoft.OpenApi.Models; //Enables Swagger for API documentation and testing directly from a browser
 using System.Text; //Converts secret keys into bytes for token signing 
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.Logging; //ILogger 
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,15 +37,18 @@ if (string.IsNullOrEmpty(jwtSecretKey) || jwtSecretKey.Length < 32)
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) //Enable JWT authentication 
     .AddJwtBearer(options =>
     {
+        options.RequireHttpsMetadata = false;
+        options.SaveToken = true;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true, //Ensure the token belongs to this API (created by this API)
             ValidateAudience = true, //Ensure the token is for this API
             ValidateLifetime = true, //Ensure the token hasn't expired 
             ValidateIssuerSigningKey = true, //Verify the token signature (signed with the secret key)
-            ValidIssuer = configuration["Jwt:Issuer"], //From appsettings.json (who created the token)
-            ValidAudience = configuration["Jwt:Audience"], //From appsettings.json (who should use the token)
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:SecretKey"])) //Secret key for signing 
+            ValidIssuer = builder.Configuration["Jwt:Issuer"], //From appsettings.json (who created the token)
+            ValidAudience = builder.Configuration["Jwt:Audience"], //From appsettings.json (who should use the token)
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"])), //Secret key for signing 
+            ClockSkew = TimeSpan.Zero // Ensures token expiration is precise
         };
     });
 
@@ -104,6 +108,10 @@ builder.Services.AddSwaggerGen(options => //Adds Swagger UI
         }
     });
 });
+
+//Register logging
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole(); //Adds logging to the console
 
 var app = builder.Build();
 

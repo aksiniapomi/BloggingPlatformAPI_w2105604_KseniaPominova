@@ -103,15 +103,24 @@ namespace GothamPostBlogAPI.Controllers
 
         // DELETE: Remove a blog post (Only Admins)
         [Authorize(Roles = nameof(UserRole.Admin))]
-        [HttpDelete("{id}")] //route: DELETE /api/blogposts/1 
+        [HttpDelete("{id}")] // Route: DELETE /api/blogposts/1
         public async Task<IActionResult> DeleteBlogPost(int id)
         {
-            var success = await _blogPostService.DeleteBlogPostAsync(id); //calls DeleteBlogPostAsync(id) in BlogPostService
+            // Retrieve User ID from JWT token
+            var userIdString = User.Identity?.Name; // Get user ID from claims
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized(); // Ensure user is authenticated
+            }
+            var userId = int.Parse(userIdString); // Convert string to int
+            // Call the BlogPostService to delete the post
+            var success = await _blogPostService.DeleteBlogPostAsync(id, userId);
+
             if (!success)
             {
-                return NotFound(); //return 404 Not Found if post doesn't exist 
+                return NotFound(); // Return 404 Not Found if post doesn't exist
             }
-            return NoContent();
+            return NoContent(); // Return 204 No Content (successful deletion)
         }
     }
 }
