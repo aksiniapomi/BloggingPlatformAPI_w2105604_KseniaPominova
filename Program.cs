@@ -115,6 +115,14 @@ builder.Logging.AddConsole(); //Adds logging to the console
 
 var app = builder.Build();
 
+// Apply pending migrations automatically at startup
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    dbContext.Database.EnsureCreated(); // Ensures DB is created if missing
+    dbContext.Database.Migrate();  //Applies migrations automatically
+}
+
 //Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
