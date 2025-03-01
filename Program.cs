@@ -15,6 +15,7 @@ using Microsoft.OpenApi.Models; //Enables Swagger for API documentation and test
 using System.Text; //Converts secret keys into bytes for token signing 
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging; //ILogger 
+using AspNetCoreRateLimit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -72,6 +73,25 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
     });
+
+//RATE LIMITING SERVICES 
+builder.Services.AddMemoryCache();
+builder.Services.Configure<IpRateLimitOptions>(options =>
+{
+    options.GeneralRules = new List<RateLimitRule>
+    {
+        new RateLimitRule
+        {
+            Endpoint = "*",
+            Period = "1m", //1 minute
+            Limit = 10 //Allow max 10 requests per minute
+        }
+    };
+});
+builder.Services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+builder.Services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
+builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+builder.Services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
 
 // Configure Swagger for API Documentation; automatic API docs generation and testing 
 builder.Services.AddEndpointsApiExplorer(); //Enable Swagger for API testing
@@ -184,7 +204,7 @@ app.Use(async (context, next) =>
     await next();
 });
 
-
+app.UseIpRateLimiting(); // Enable rate limiting
 app.UseAuthorization();
 app.MapControllers();
 
