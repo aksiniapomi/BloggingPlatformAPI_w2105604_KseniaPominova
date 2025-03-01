@@ -37,7 +37,7 @@ namespace GothamPostBlogAPI.Services
         }
 
         // Create a new user
-        public async Task<User> CreateUserAsync(User user)
+        public async Task<User?> CreateUserAsync(User user)
         {
             // Ensure email is unique; the user has not been registered with this email before 
             var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == user.Email);

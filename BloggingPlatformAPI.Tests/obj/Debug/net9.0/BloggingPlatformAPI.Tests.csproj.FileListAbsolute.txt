@@ -1,6 +1,0 @@
-/Users/xeniauniaccount/Desktop/GothamBlogWebDev/BloggingPlatformAPI/BloggingPlatformAPI.Tests/obj/Debug/net9.0/BloggingPlatformAPI.Tests.csproj.AssemblyReference.cache
-/Users/xeniauniaccount/Desktop/GothamBlogWebDev/BloggingPlatformAPI/BloggingPlatformAPI.Tests/obj/Debug/net9.0/BloggingPlatformAPI.Tests.GeneratedMSBuildEditorConfig.editorconfig
-/Users/xeniauniaccount/Desktop/GothamBlogWebDev/BloggingPlatformAPI/BloggingPlatformAPI.Tests/obj/Debug/net9.0/BloggingPlatformAPI.Tests.AssemblyInfoInputs.cache
-/Users/xeniauniaccount/Desktop/GothamBlogWebDev/BloggingPlatformAPI/BloggingPlatformAPI.Tests/obj/Debug/net9.0/BloggingPlatformAPI.Tests.AssemblyInfo.cs
-/Users/xeniauniaccount/Desktop/GothamBlogWebDev/BloggingPlatformAPI/BloggingPlatformAPI.Tests/obj/Debug/net9.0/BloggingPlatformAPI.Tests.csproj.CoreCompileInputs.cache
-/Users/xeniauniaccount/Desktop/GothamBlogWebDev/BloggingPlatformAPI/BloggingPlatformAPI.Tests/obj/Debug/net9.0/BloggingPlatformAPI.Tests.sourcelink.json
