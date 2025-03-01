@@ -122,8 +122,8 @@ using (var scope = app.Services.CreateScope())
     dbContext.Database.Migrate();  //Applies migrations automatically
 }
 
-//Configure the HTTP request pipeline
-if (app.Environment.IsDevelopment())
+//Configure the HTTP request pipeline; enable Swagger in all enivronments
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction()) // Ensure it works in production too
 {
     app.UseSwagger();
     app.UseSwaggerUI(c =>

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "MIV9T0dxAgM=",
+  "dgSpecHash": "3DUDGRhY4Qg=",
   "success": true,
   "projectFilePath": "/Users/xeniauniaccount/Desktop/GothamBlogWebDev/BloggingPlatformAPI/BloggingPlatformAPI.csproj",
   "expectedPackageFiles": [
@@ -62,10 +62,10 @@
     "/Users/xeniauniaccount/.nuget/packages/sqlitepclraw.core/2.1.10/sqlitepclraw.core.2.1.10.nupkg.sha512",
     "/Users/xeniauniaccount/.nuget/packages/sqlitepclraw.lib.e_sqlite3/2.1.10/sqlitepclraw.lib.e_sqlite3.2.1.10.nupkg.sha512",
     "/Users/xeniauniaccount/.nuget/packages/sqlitepclraw.provider.e_sqlite3/2.1.10/sqlitepclraw.provider.e_sqlite3.2.1.10.nupkg.sha512",
-    "/Users/xeniauniaccount/.nuget/packages/swashbuckle.aspnetcore/7.2.0/swashbuckle.aspnetcore.7.2.0.nupkg.sha512",
-    "/Users/xeniauniaccount/.nuget/packages/swashbuckle.aspnetcore.swagger/7.2.0/swashbuckle.aspnetcore.swagger.7.2.0.nupkg.sha512",
-    "/Users/xeniauniaccount/.nuget/packages/swashbuckle.aspnetcore.swaggergen/7.2.0/swashbuckle.aspnetcore.swaggergen.7.2.0.nupkg.sha512",
-    "/Users/xeniauniaccount/.nuget/packages/swashbuckle.aspnetcore.swaggerui/7.2.0/swashbuckle.aspnetcore.swaggerui.7.2.0.nupkg.sha512",
+    "/Users/xeniauniaccount/.nuget/packages/swashbuckle.aspnetcore/7.3.1/swashbuckle.aspnetcore.7.3.1.nupkg.sha512",
+    "/Users/xeniauniaccount/.nuget/packages/swashbuckle.aspnetcore.swagger/7.3.1/swashbuckle.aspnetcore.swagger.7.3.1.nupkg.sha512",
+    "/Users/xeniauniaccount/.nuget/packages/swashbuckle.aspnetcore.swaggergen/7.3.1/swashbuckle.aspnetcore.swaggergen.7.3.1.nupkg.sha512",
+    "/Users/xeniauniaccount/.nuget/packages/swashbuckle.aspnetcore.swaggerui/7.3.1/swashbuckle.aspnetcore.swaggerui.7.3.1.nupkg.sha512",
     "/Users/xeniauniaccount/.nuget/packages/system.clientmodel/1.0.0/system.clientmodel.1.0.0.nupkg.sha512",
     "/Users/xeniauniaccount/.nuget/packages/system.codedom/6.0.0/system.codedom.6.0.0.nupkg.sha512",
     "/Users/xeniauniaccount/.nuget/packages/system.collections.immutable/7.0.0/system.collections.immutable.7.0.0.nupkg.sha512",
