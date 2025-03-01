@@ -66,5 +66,5 @@ namespace GothamPostBlogAPI.Models
 //     Email = "admin@example.com",
 //     PasswordHash = "hashed_password",
 //     Role = UserRole.Admin
-// };
+// }; //
 
