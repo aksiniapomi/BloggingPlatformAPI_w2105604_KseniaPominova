@@ -133,6 +133,18 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+// Global Error Handling Middleware
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        context.Response.StatusCode = 500;
+        context.Response.ContentType = "application/json";
+        var errorMessage = new { error = "An unexpected error occurred." };
+        await context.Response.WriteAsJsonAsync(errorMessage);
+    });
+});
+
 // Enable routing
 app.UseRouting();
 
