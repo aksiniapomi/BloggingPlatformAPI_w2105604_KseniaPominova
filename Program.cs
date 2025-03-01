@@ -150,6 +150,41 @@ app.UseRouting();
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
+
+//CORS (Cross-Origin Resource Sharing) and Rate Limiting to enhance security
+//CORS prevents unauthorized domains from accessing your API
+//Enable CORS (Allow frontend requests)
+app.UseCors(policy =>
+    policy.AllowAnyOrigin() // Allows requests from any domain
+          .AllowAnyMethod() // Allows GET, POST, PUT, DELETE
+          .AllowAnyHeader()); // Allows any headers
+
+//Enable Rate Limiting to prevent API abuse
+app.Use(async (context, next) =>
+{
+    var clientIp = context.Connection.RemoteIpAddress?.ToString();
+    if (string.IsNullOrEmpty(clientIp))
+    {
+        await next();
+        return;
+    }
+
+    // Simple rate limit: Allow max 10 requests per minute
+    var cacheKey = $"RateLimit:{clientIp}";
+    var requestCount = context.Items.ContainsKey(cacheKey) ? (int)context.Items[cacheKey]! : 0;
+
+    if (requestCount >= 10) //Rate Limiting (Limits API abuse by allowing only 10 requests per minute per client) 
+    {
+        context.Response.StatusCode = 429; // Too Many Requests
+        await context.Response.WriteAsync("Rate limit exceeded. Try again later.");
+        return;
+    }
+
+    context.Items[cacheKey] = requestCount + 1;
+    await next();
+});
+
+
 app.UseAuthorization();
 app.MapControllers();
 
