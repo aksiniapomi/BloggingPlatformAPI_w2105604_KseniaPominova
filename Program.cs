@@ -47,7 +47,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) //Ena
             ValidateIssuerSigningKey = true, //Verify the token signature (signed with the secret key)
             ValidIssuer = builder.Configuration["Jwt:Issuer"], //From appsettings.json (who created the token)
             ValidAudience = builder.Configuration["Jwt:Audience"], //From appsettings.json (who should use the token)
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"])), //Secret key for signing 
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"] ?? "DefaultSecureKey123456")), //Secret key for signing 
             ClockSkew = TimeSpan.Zero // Ensures token expiration is precise
         };
     });

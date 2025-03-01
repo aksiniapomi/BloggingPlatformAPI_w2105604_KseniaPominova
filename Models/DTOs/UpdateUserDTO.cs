@@ -5,12 +5,12 @@ namespace GothamPostBlogAPI.Models.DTOs
     public class UpdateUserDTO
     {
         [MaxLength(100)]
-        public string Username { get; set; }
+        public required string Username { get; set; }
 
         [EmailAddress]
-        public string Email { get; set; }
+        public required string Email { get; set; }
 
         [MinLength(6)]
-        public string Password { get; set; }
+        public required string Password { get; set; }
     }
 }

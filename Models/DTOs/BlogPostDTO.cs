@@ -6,10 +6,10 @@ namespace GothamPostBlogAPI.Models.DTOs
     public class BlogPostDTO
     {
         [Required, MaxLength(255)]
-        public string Title { get; set; } //Title required, max 255 characters
+        public required string Title { get; set; } //Title required, max 255 characters
 
         [Required]
-        public string Content { get; set; } //Content required
+        public required string Content { get; set; } //Content required
 
         [Required]
         public int CategoryId { get; set; } //Prevent users from manually setting UserId
@@ -20,14 +20,14 @@ namespace GothamPostBlogAPI.Models.DTOs
     {
         public int BlogPostId { get; set; } //Unique ID for reference
 
-        public string Title { get; set; } //Title of the post
+        public required string Title { get; set; } //Title of the post
 
-        public string Content { get; set; } //Main post content
+        public required string Content { get; set; } //Main post content
 
         public DateTime DateCreated { get; set; } //When the post was created
 
         public int UserId { get; set; } //User who wrote the post (ID only)
 
-        public string Username { get; set; } //To display author without exposing full User object
+        public required string Username { get; set; } //To display author without exposing full User object
     }
 }
