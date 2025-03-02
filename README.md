@@ -1,43 +1,58 @@
 # GothamPost Blog API 🦇📰
 
 ## **🚀 A .NET-based blogging platform** with authentication, posts, comments, and likes.
-## **❤️ Dockerized** for easy deployment.  
-## ✨ Secure with JWT Authentication.  
+
+## **❤️ Dockerized** for easy deployment.
+
+## ✨ Secure with JWT Authentication.
+
 ---
-## **Features**  
+
+## **Features**
+
 ✅ User Authentication (Register/Login)  
 ✅ Blog Post Creation & Retrieval  
 ✅ Commenting & Liking Posts  
 ✅ SQLite Database with Automatic Migrations  
-✅ Docker Support for Easy Deployment  
----
-## **Prerequisites**  
-Before running the project, ensure you have:  
-- **Docker installed** ([Download Here](https://www.docker.com/get-started))  
-- **Git installed** ([Download Here](https://git-scm.com/downloads))  
+✅ Docker Support for Easy Deployment
+
 ---
 
-## **🚀 Setup & Run the Project**  
+## **Prerequisites**
 
-### **1.Clone the Repository**  
+Before running the project, ensure you have:
+
+- **Docker installed** ([Download Here](https://www.docker.com/get-started))
+- **Git installed** ([Download Here](https://git-scm.com/downloads))
+
+---
+
+## **🚀 Setup & Run the Project**
+
+### **1.Clone the Repository**
+
 ```sh
 git clone https://github.com/yourusername/WebDev.git
 cd WebDev
 ```
 
-### **2.Build and Run the Docker Container**  
+### **2.Build and Run the Docker Container**
+
 ```sh
 docker build -t bloggingplatformapi .
 docker run -d -p 5113:8080 bloggingplatformapi
 ```
 
-### **3.Verify API is Running**  
-Open your browser or use curl:  
+### **3.Verify API is Running**
+
+Open your browser or use curl:
+
 ```sh
 curl -X GET http://localhost:5113/api/blogpost
 ```
 
-Expected Response (Sample Data):  
+Expected Response (Sample Data):
+
 ```json
 {
   "blogPostId": 1,
@@ -50,28 +65,33 @@ Expected Response (Sample Data):
 ```
 
 ---
-## **API Documentation (Swagger UI)**  
+
+## **API Documentation (Swagger UI)**
+
 **Swagger UI:** [http://localhost:5113/swagger](http://localhost:5113/swagger)  
-Use Swagger UI to test API endpoints directly in your browser.  
+Use Swagger UI to test API endpoints directly in your browser.
+
 ---
 
-## **Database & Migrations**  
+## **Database & Migrations**
 
 **Automatic Migrations Enabled**  
-Migrations **run automatically at startup**.  
+Migrations **run automatically at startup**.
 
-### **Reset the Database (If Needed)**  
+### **Reset the Database (If Needed)**
+
 ```sh
 rm bloggingplatform.db
 docker stop $(docker ps -q)
 docker build -t bloggingplatformapi .
 docker run -d -p 5113:8080 bloggingplatformapi
 ```
+
 ---
 
-## **Environment Variables & Secrets**  
+## **Environment Variables & Secrets**
 
-⚠️ **Important:** Set the following **secrets/environment variables** in `appsettings.json` or GitHub Actions.  
+⚠️ **Important:** Set the following **secrets/environment variables** in `appsettings.json` or GitHub Actions.
 
 ```json
 {
@@ -85,49 +105,64 @@ docker run -d -p 5113:8080 bloggingplatformapi
   }
 }
 ```
----
-
-## **API Endpoints**  
-
-### **🔐 User Authentication**  
-| Method | Endpoint | Description |
-|--------|---------|------------|
-| POST | `/api/auth/register` | Register a new user |
-| POST | `/api/auth/login` | Login and receive a JWT token |
-
-### **📝 Blog Posts**  
-| Method | Endpoint | Description |
-|--------|---------|------------|
-| GET | `/api/blogpost` | Get all blog posts |
-| POST | `/api/blogpost` | Create a new blog post |
-
-### **💬 Comments**  
-| Method | Endpoint | Description |
-|--------|---------|------------|
-| GET | `/api/comment` | Get all comments |
-| POST | `/api/comment` | Add a comment to a post |
-
-### **❤️ Likes**  
-| Method | Endpoint | Description |
-|--------|---------|------------|
-| POST | `/api/like` | Like a post |
 
 ---
-## **Stopping & Restarting the API**  
 
-### **Stop the Running Container**  
+## **API Endpoints**
+
+### **🔐 User Authentication**
+
+| Method | Endpoint             | Description                   |
+| ------ | -------------------- | ----------------------------- |
+| POST   | `/api/auth/register` | Register a new user           |
+| POST   | `/api/auth/login`    | Login and receive a JWT token |
+
+### **📝 Blog Posts**
+
+| Method | Endpoint        | Description            |
+| ------ | --------------- | ---------------------- |
+| GET    | `/api/blogpost` | Get all blog posts     |
+| POST   | `/api/blogpost` | Create a new blog post |
+
+### **💬 Comments**
+
+| Method | Endpoint       | Description             |
+| ------ | -------------- | ----------------------- |
+| GET    | `/api/comment` | Get all comments        |
+| POST   | `/api/comment` | Add a comment to a post |
+
+### **❤️ Likes**
+
+| Method | Endpoint    | Description |
+| ------ | ----------- | ----------- |
+| POST   | `/api/like` | Like a post |
+
+---
+
+## **Stopping & Restarting the API**
+
+### **Stop the Running Container**
+
 ```sh
 docker stop $(docker ps -q)
 ```
-### **Restart the API**  
+
+### **Restart the API**
+
 ```sh
 docker run -d -p 5113:8080 bloggingplatformapi
 ```
+
 ---
 
-## **Notes**  
+## **Notes**
+
 ✅ The database file (`bloggingplatform.db`) **persists data** across restarts.  
 ✅ Ensure **port 5113** is available before running the container.  
-✅ If the database is missing, **automatic migrations will recreate it**.  
+✅ If the database is missing, **automatic migrations will recreate it**.
 
-**Enjoy Gotham Post!** 🦇 
+## API Documentation
+
+For detailed API endpoints and usage, refer to [API.md] (API.md).
+
+**Enjoy Gotham Post!** 🦇

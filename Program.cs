@@ -1,3 +1,6 @@
+// Author: Ksenia Pominova //
+// Student number: W2105604 //
+
 //Imports
 using GothamPostBlogAPI.Data; //Allow access to ApplicationDbContext.cs to handle database operations (project files)
 using GothamPostBlogAPI.Services; //Business logic services import (project files)
