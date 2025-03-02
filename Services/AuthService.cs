@@ -80,6 +80,7 @@ namespace GothamPostBlogAPI.Services
                 {
                     Subject = new ClaimsIdentity(new[]
                     {
+                        new Claim(ClaimTypes.Name, user.UserId.ToString()), // Store User ID as Name claim
                         new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()), // Store User ID
                         new Claim(ClaimTypes.Role, user.Role.ToString()), // Store Role (Admin/User)
                     }),

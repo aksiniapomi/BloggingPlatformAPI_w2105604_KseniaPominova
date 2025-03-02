@@ -41,28 +41,18 @@ namespace GothamPostBlogAPI.Controllers
         [HttpGet("{id}")] // Returns the blog post defined by the ID number (GET /api/blogposts/1)
         public async Task<ActionResult<BlogPostResponseDTO>> GetBlogPost(int id)
         {
-            var blogPost = await _blogPostService.GetBlogPostByIdAsync(id); // Calls GetBlogPostByIdAsync in BlogPostService
-            if (blogPost == null)
+            var blogPostDto = await _blogPostService.GetBlogPostByIdAsync(id); // Calls GetBlogPostByIdAsync in BlogPostService
+            if (blogPostDto == null)
             {
                 return NotFound(); // Return 404 Not Found if no matching post is found
             }
 
-            //Convert the `BlogPost` entity into `BlogPostResponseDTO` before returning
-            var blogPostDto = new BlogPostResponseDTO
-            {
-                BlogPostId = blogPost.BlogPostId, // Assign unique post ID
-                Title = blogPost.Title, // Assign title
-                Content = blogPost.Content, // Assign post content
-                DateCreated = blogPost.DateCreated, // Assign the date the post was created
-                UserId = blogPost.UserId, // Assign the ID of the user who created the post
-                Username = blogPost.User?.Username // Assign the username of the author (avoid full User object)
-            };
-
             return Ok(blogPostDto); // Return the DTO (prevents exposing unnecessary user details)
         }
 
+
         // POST: Create a new blog post (only registered Users and Admins)
-        [Authorize(Roles = $"{nameof(UserRole.Admin)},{nameof(UserRole.RegisteredUser)}")]
+        [Authorize(Roles = "Admin,RegisteredUser")]
         [HttpPost] //route: POST /api/blogpost - endpoint of the API
         public async Task<ActionResult<BlogPost>> CreateBlogPost(BlogPostDTO blogPostDto) //use DTO instead of Model because only title,content and categoryId is needed
         {
@@ -80,7 +70,7 @@ namespace GothamPostBlogAPI.Controllers
         }
 
         // PUT: Update a blog post (only registered Users and Admins)
-        [Authorize(Roles = $"{nameof(UserRole.Admin)},{nameof(UserRole.RegisteredUser)}")]
+        [Authorize(Roles = "Admin,RegisteredUser")]
         [HttpPut("{id}")] //route: PUT /api/blogposts/1
         public async Task<IActionResult> UpdateBlogPost(int id, BlogPostDTO blogPostDto) //use DTO
         {
@@ -96,13 +86,13 @@ namespace GothamPostBlogAPI.Controllers
             var success = await _blogPostService.UpdateBlogPostAsync(id, blogPostDto, userId);
             if (!success)
             {
-                return BadRequest(); //returns 400 Bad Request if IDs don’t match
+                return BadRequest(); //returns 400 Bad Request if IDs don't match
             }
             return NoContent();
         }
 
         // DELETE: Remove a blog post (Only Admins)
-        [Authorize(Roles = nameof(UserRole.Admin))]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")] // Route: DELETE /api/blogposts/1
         public async Task<IActionResult> DeleteBlogPost(int id)
         {

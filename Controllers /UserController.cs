@@ -76,7 +76,7 @@ namespace GothamPostBlogAPI.Controllers
         }
 
         // GET all users (Only Admins can view the full list of users)
-        [Authorize(Roles = nameof(UserRole.Admin))]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
@@ -102,7 +102,7 @@ namespace GothamPostBlogAPI.Controllers
             }
             var loggedInUserId = int.Parse(userIdString);
 
-            if (loggedInUserId != id && !User.IsInRole(nameof(UserRole.Admin)))
+            if (loggedInUserId != id && !User.IsInRole("Admin"))
             {
                 return Forbid(); // Prevent unauthorized access
             }
@@ -122,7 +122,7 @@ namespace GothamPostBlogAPI.Controllers
             }
             var loggedInUserId = int.Parse(userIdString);
 
-            if (loggedInUserId != id && !User.IsInRole(nameof(UserRole.Admin)))
+            if (loggedInUserId != id && !User.IsInRole("Admin"))
             {
                 return Forbid();
             }
@@ -138,7 +138,7 @@ namespace GothamPostBlogAPI.Controllers
         }
 
         // PUT - Change a user's role (Only Admins can do this)
-        [Authorize(Roles = nameof(UserRole.Admin))]
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}/role")]
         public async Task<IActionResult> UpdateUserRole(int id, [FromBody] UpdateUserRoleDTO request)
         {
@@ -160,7 +160,7 @@ namespace GothamPostBlogAPI.Controllers
         }
 
         // DELETE: Remove a user (Only Admins)
-        [Authorize(Roles = nameof(UserRole.Admin))]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {

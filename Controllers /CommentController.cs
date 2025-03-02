@@ -38,8 +38,8 @@ namespace GothamPostBlogAPI.Controllers
             return comment;
         }
 
-        //POST: Create a new comment (Only registered Users and Admins)
-        [Authorize(Roles = $"{nameof(UserRole.Admin)},{nameof(UserRole.RegisteredUser)}")]
+        //POST: Create a new comment (All authenticated users including Readers)
+        [Authorize(Roles = $"{nameof(UserRole.Admin)},{nameof(UserRole.RegisteredUser)},{nameof(UserRole.Reader)}")]
         [HttpPost]
         public async Task<ActionResult<Comment>> CreateComment(CommentDTO commentDto)
         {

@@ -15,6 +15,9 @@ namespace GothamPostBlogAPI.Models
         [Required, MaxLength(100)]
         public string Name { get; set; }  //Category name
 
+        [StringLength(200)]
+        public string Description { get; set; } = string.Empty;
+
         //List stores multiple blog posts; one category can have multiple blog posts 
         public List<BlogPost> BlogPosts { get; set; } // Navigation Property
 

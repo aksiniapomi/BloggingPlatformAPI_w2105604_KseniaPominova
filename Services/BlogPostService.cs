@@ -34,23 +34,42 @@ namespace GothamPostBlogAPI.Services
         }
 
         // Get a blog post by ID
-        public async Task<BlogPost?> GetBlogPostByIdAsync(int id)
+        public async Task<BlogPostResponseDTO?> GetBlogPostByIdAsync(int id)
         {
-            _logger.LogInformation("Fetching blog post with ID {PostId}", id);
-
-            var blogPost = await _context.BlogPosts
-                .Include(blogPost => blogPost.User)
-                .Include(blogPost => blogPost.Category)
-                .Include(blogPost => blogPost.Comments)
-                .Include(blogPost => blogPost.Likes)
-                .FirstOrDefaultAsync(blogPost => blogPost.BlogPostId == id);
-
-            if (blogPost == null)
+            try
             {
-                _logger.LogWarning("Blog post with ID {PostId} not found.", id);
-            }
+                var blogPost = await _context.BlogPosts
+                    .Include(b => b.User)
+                    .Include(b => b.Category)
+                    .Include(b => b.Comments)
+                        .ThenInclude(c => c.User)
+                    .Include(b => b.Likes)
+                        .ThenInclude(l => l.User)
+                    .FirstOrDefaultAsync(b => b.BlogPostId == id);
 
-            return blogPost;
+                if (blogPost == null)
+                {
+                    _logger.LogWarning("Blog post with ID {Id} not found", id);
+                    return null;
+                }
+
+                var blogPostDto = new BlogPostResponseDTO
+                {
+                    BlogPostId = blogPost.BlogPostId,
+                    Title = blogPost.Title,
+                    Content = blogPost.Content,
+                    DateCreated = blogPost.DateCreated,
+                    UserId = blogPost.UserId,
+                    Username = blogPost.User?.Username ?? "Unknown User"
+                };
+
+                return blogPostDto;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving blog post with ID {Id}", id);
+                throw;
+            }
         }
 
         // Create a new blog post
@@ -130,7 +149,7 @@ namespace GothamPostBlogAPI.Services
                 // Ensure only the original author or Admin can delete the post
                 if (blogPost.UserId != userId && !UserIsAdmin(userId))
                 {
-                    _logger.LogWarning("Unauthorized delete attempt: User {UserId} tried to delete blog post {PostId}.", userId);
+                    _logger.LogWarning("Unauthorized delete attempt: User {UserId} tried to delete blog post {BlogPostId}.", userId, blogPostId);
                     return false;
                 }
 

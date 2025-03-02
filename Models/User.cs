@@ -62,9 +62,9 @@ namespace GothamPostBlogAPI.Models
 }
 
 // var adminUser = new User {
-//     Username = "Admin123",
+//     Username = "Admin@123",
 //     Email = "admin@example.com",
 //     PasswordHash = "hashed_password",
 //     Role = UserRole.Admin
 // }; //
-
+// 
