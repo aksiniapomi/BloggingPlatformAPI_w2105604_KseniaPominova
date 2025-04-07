@@ -1,5 +1,6 @@
 //The infromation about all the database tables here 
 //Connects the models to the database using EF Core 
+//This file only contains database-related logic and is placed in Data/ to maintain separation.
 
 //Import all models 
 using GothamPostBlogAPI.Models;

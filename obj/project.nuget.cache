@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "mAvPPOMPbgI=",
+  "dgSpecHash": "wgR4ugNbHRA=",
   "success": true,
-  "projectFilePath": "/Users/xeniauniaccount/Desktop/GothamBlogWebDev/BloggingPlatformAPI/BloggingPlatformAPI.csproj",
+  "projectFilePath": "/Users/xeniauniaccount/Desktop/GothamBlog/backend/BloggingPlatformAPI/BloggingPlatformAPI.csproj",
   "expectedPackageFiles": [
     "/Users/xeniauniaccount/.nuget/packages/aspnetcoreratelimit/5.0.0/aspnetcoreratelimit.5.0.0.nupkg.sha512",
     "/Users/xeniauniaccount/.nuget/packages/azure.core/1.38.0/azure.core.1.38.0.nupkg.sha512",

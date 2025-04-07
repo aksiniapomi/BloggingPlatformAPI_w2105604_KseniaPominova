@@ -30,6 +30,7 @@ var configuration = builder.Configuration;
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(configuration.GetConnectionString("DefaultConnection"))); //Usage of EF Core to let the API communicate with SQLite to store and retrieve data
 
+//environment variables 
 //Add Authentication using JWT Bearer Token
 //JWT JSON Web Token securely authenticates users in web application 
 //Once user logs in, API generates JWT and send it to the client; JWT is included in the Authorization header in future requests 
@@ -67,7 +68,7 @@ builder.Services.AddAuthorization(options =>
 });
 
 //Register Services for Dependency Injection
-builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<AuthService>(); //Scoped (AddScoped): Services are created per request (useful for database operations)
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<BlogPostService>();
 builder.Services.AddScoped<CategoryService>();
@@ -94,7 +95,7 @@ builder.Services.Configure<IpRateLimitOptions>(options =>
         }
     };
 });
-builder.Services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+builder.Services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>(); //Singleton (AddSingleton): Services are reused (for things like caching & rate-limiting).
 builder.Services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
 builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
 builder.Services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
@@ -180,10 +181,23 @@ app.UseAuthentication();
 //CORS (Cross-Origin Resource Sharing) and Rate Limiting to enhance security
 //CORS prevents unauthorized domains from accessing your API
 //Enable CORS (Allow frontend requests)
-app.UseCors(policy =>
-    policy.AllowAnyOrigin() // Allows requests from any domain
-          .AllowAnyMethod() // Allows GET, POST, PUT, DELETE
-          .AllowAnyHeader()); // Allows any headers
+//app.UseCors(policy =>
+// policy.AllowAnyOrigin() // Allows requests from any domain
+//    .AllowAnyMethod() // Allows GET, POST, PUT, DELETE
+//    .AllowAnyHeader()); // Allows any headers
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5173")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
+app.UseCors("AllowFrontend");
 
 //Enable Rate Limiting to prevent API abuse
 app.Use(async (context, next) =>

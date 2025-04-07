@@ -15,7 +15,7 @@ namespace GothamPostBlogAPI.Models
 {
     public class BlogPost
     {
-        [Key] //data annotation; signals to SQLite that this is a key 
+        [Key] //data annotation; signals to SQLite that this is a primary key 
         public int BlogPostId { get; set; }  //Primary Key, unique identifier for the BlogPost
 
         [Required, MaxLength(255)]

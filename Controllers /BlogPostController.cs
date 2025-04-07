@@ -13,6 +13,7 @@ namespace GothamPostBlogAPI.Controllers
 {
     [Route("api/[controller]")] //URL route api/blogposts e.g. GET /api/blogposts calles GetBlogPosts(); POST /api/blogposts calls CreateBlogPost()
     [ApiController] //enables automatic validation 
+    //constructor injection
     public class BlogPostController : ControllerBase //inherits from ControllerBase with built-in API functionality 
     {
         private readonly BlogPostService _blogPostService; //dependency injection by declaring the service layer, reference to BlogPostService 

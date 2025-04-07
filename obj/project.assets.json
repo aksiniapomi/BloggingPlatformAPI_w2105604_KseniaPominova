@@ -5653,11 +5653,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/xeniauniaccount/Desktop/GothamBlogWebDev/BloggingPlatformAPI/BloggingPlatformAPI.csproj",
+      "projectUniqueName": "/Users/xeniauniaccount/Desktop/GothamBlog/backend/BloggingPlatformAPI/BloggingPlatformAPI.csproj",
       "projectName": "BloggingPlatformAPI",
-      "projectPath": "/Users/xeniauniaccount/Desktop/GothamBlogWebDev/BloggingPlatformAPI/BloggingPlatformAPI.csproj",
+      "projectPath": "/Users/xeniauniaccount/Desktop/GothamBlog/backend/BloggingPlatformAPI/BloggingPlatformAPI.csproj",
       "packagesPath": "/Users/xeniauniaccount/.nuget/packages/",
-      "outputPath": "/Users/xeniauniaccount/Desktop/GothamBlogWebDev/BloggingPlatformAPI/obj/",
+      "outputPath": "/Users/xeniauniaccount/Desktop/GothamBlog/backend/BloggingPlatformAPI/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/xeniauniaccount/.nuget/NuGet/NuGet.Config"
